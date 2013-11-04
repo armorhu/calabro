@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>mqfa_proj</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>com.adobe.flexbuilder.project.flexbuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>com.adobe.flexbuilder.project.flexlibnature</nature>
+		<nature>com.adobe.flexbuilder.project.actionscriptnature</nature>
+	</natures>
+	<linkedResources>
+		<link>
+			<name>[source path] 3rd</name>
+			<type>2</type>
+			<location>/Users/hufan/Documents/workspace/tencent/mqfa_proj/branches/libs/3rd</location>
+		</link>
+		<link>
+			<name>[source path] QCL2</name>
+			<type>2</type>
+			<location>/Users/hufan/Documents/workspace/tencent/mqfa_proj/branches/libs/QCL2</location>
+		</link>
+		<link>
+			<name>[source path] starling</name>
+			<type>2</type>
+			<location>/Users/hufan/Documents/workspace/tencent/mqfa_proj/branches/libs/starling</location>
+		</link>
+	</linkedResources>
+</projectDescription>

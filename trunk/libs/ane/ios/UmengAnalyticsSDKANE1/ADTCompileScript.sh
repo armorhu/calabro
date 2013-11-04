@@ -1,0 +1,1 @@
+adt -package -target ipa-test-interpreter -provisioning-profile Your.mobileprovision -storetype pkcs12 -keystore YourCertificates.p12 -storepass YourPassword YourApp.ipa info-app.xml YourApp_SWF.swf -extdir YourExtensionPath

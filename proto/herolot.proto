@@ -1,0 +1,6 @@
+package tutorial;
+
+message Person {
+    required int32 id = 2;
+}
+
