@@ -21,6 +21,8 @@ package
 			super();
 			trace(File.applicationStorageDirectory.nativePath);
 			
+			
+			
 			// 支持 autoOrient
 			if (this.stage)
 				initlaize(null);
