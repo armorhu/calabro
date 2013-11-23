@@ -4,6 +4,7 @@ package com.arm.herolot.works.startup
 	import com.arm.herolot.HerolotApplication;
 	import com.arm.herolot.model.config.AppConfig;
 	import com.arm.herolot.model.consts.ModuleDef;
+	import com.arm.herolot.modules.battle.IBattleApi;
 	import com.qzone.qfa.interfaces.IApplication;
 	import com.snsapp.mobile.mananger.workflow.SimpleWork;
 	import com.snsapp.mobile.mananger.workflow.WorkFlowEvent;
@@ -32,7 +33,7 @@ package com.arm.herolot.works.startup
 			_initliazeFlow.registeWork(_app.deviceInfo, false, '加载游戏.');
 			_initliazeFlow.registeWork(_app.rsLoader, false, '加载游戏..');
 			_initliazeFlow.registeWork(new StartupStarling(_app), false, '加载游戏...');
-			_initliazeFlow.registeWork(AppConfig,false,'初始化配置文件');
+			_initliazeFlow.registeWork(AppConfig, false, '初始化配置文件');
 			_initliazeFlow.addEventListeners(initiliazeFlowHanlder);
 			_initliazeFlow.start();
 		}
@@ -70,13 +71,23 @@ package com.arm.herolot.works.startup
 		}
 
 
+
+		public function get app():HerolotApplication
+		{
+			return _app as HerolotApplication
+		}
+
 		private function startupGame():void
 		{
 			destoryInitliazeFlow();
 			//加载游戏数据
 			HerolotApplication(_app).gameDataModel.loadGameData();
-			_app.loadModule(ModuleDef.MODULE_LAUNCH); //加载启动模块。
-//			_app.loadModule(Consts.MODULE_BATTLE);
+//			_app.loadModule(ModuleDef.MODULE_LAUNCH); //加载启动模块。
+			_app.loadModule(ModuleDef.MODULE_BATTLE);
+
+
+			var iBattle:IBattleApi = _app.getModuleAPI(ModuleDef.MODULE_BATTLE) as IBattleApi;
+			iBattle.startBattle(app.gameDataModel.heros[0]);
 		}
 	}
 }

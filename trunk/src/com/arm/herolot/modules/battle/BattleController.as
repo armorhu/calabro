@@ -1,6 +1,12 @@
 package com.arm.herolot.modules.battle
 {
+	import com.arm.herolot.Consts;
+	import com.arm.herolot.Vars;
 	import com.arm.herolot.modules.battle.battle.hero.HeroModel;
+	import com.arm.herolot.modules.battle.model.MapGridModel;
+	import com.arm.herolot.modules.battle.view.texture.BattleTexture;
+	import com.snsapp.mobile.utils.MobileSystemUtil;
+	import com.snsapp.starling.texture.ClientTextureParams;
 	
 	import starling.display.Sprite;
 	import starling.events.Event;
@@ -10,6 +16,7 @@ package com.arm.herolot.modules.battle
 		private var _module:ModuleBattle;
 		private var _model:BattleModel;
 		private var _view:BattleView;
+		private var _texture:BattleTexture;
 
 		public function BattleController(module:ModuleBattle)
 		{
@@ -18,65 +25,56 @@ package com.arm.herolot.modules.battle
 
 		public function startBattle(hero:HeroModel):void
 		{
-			_model = new BattleModel(this);
-			_model.addEventListener(BattleModel.COMLETE_LOAD_DATA, onLoadData);
-			_model.addEventListener(BattleModel.REQUEST_DISPLAY_INTERACTION, onDisplayInteraction);
-			_model.addEventListener(BattleModel.BOT_OPERATION, onBot);
-			_model.addEventListener(BattleModel.GAME_OVER, onGameOver);
-
-			_view = new BattleView(this);
-			_view.addEventListener(BattleView.REQUEST_DATA, requestData);
-			_view.addEventListener(BattleView.TILE_TOUCHED, onTileTouch);
-			Sprite(_module.container).addChild(_view);
-			_view.show(function viewSetUpComplete(suc:Boolean):void
+			setupTexture();
+			function setupTexture():void
 			{
-				//视图材质初始化成功。。。。
-				if (suc)
+				var clientParams:ClientTextureParams = new ClientTextureParams();
+				clientParams.deviceDefalutLevelConfig = new XML;
+				clientParams.clientVersion = Consts.VERSION;
+				clientParams.deviceName = _module.app.deviceInfo.deviceName;
+				clientParams.os = MobileSystemUtil.os;
+				clientParams.screenScale = Vars.starlingScreenScale;
+				clientParams.textureVersion = "1";
+				clientParams.resouceSwf = Consts.RES_BATTLE;
+				_texture = new BattleTexture(_module.app);
+				_texture.setup(clientParams, onComplete);
+				/**材质启动成功。**/
+				function onComplete(suc:Boolean):void
 				{
-					_model.setBattleHero(hero); //设置英雄数据。
-					_model.createMapDataAt(1); //构造第一层的地图数据。
+					if (suc == false)
+					{
+						_texture.dispose();
+						_texture = null;
+					}
+					else
+					{
+						initaliaze();
+					}
 				}
-				else
-				{ //do sth....
-				}
-			});
+			}
+			
+			function initaliaze():void
+			{
+				_view = new BattleView();
+				Sprite(_module.container).addChild(_view);
+				_view.initaliaze(_texture);
+				
+				_model = new BattleModel();
+				_model.addEventListener(BattleModel.CHANGE_FLOOR,modelEventHandler);
+				_model.start(hero);
+				_model.nextFloor();
+			}
 		}
 		
-		private function onBot(event:Event):void
+		private function modelEventHandler(evt:Event):void
 		{
-			_view.touchable = event.data.allowUserTouch as Boolean;
-		}
-		
-		private function onGameOver(event:Event):void
-		{
-			Sprite(_module.container).removeChild(_view);
-			_module.app.gameOver();
-		}
-		
-		private function onTileTouch(event:Event):void
-		{
-			_model.processTileTouch(event.data.x, event.data.y);
-		}
-
-		private function requestData(event:Event):void
-		{
-			_model.requestData(event.data as String);
-		}
-		
-		private function onDisplayInteraction(event:Event):void
-		{
-			_view.displayInteraction(event.data['type'], event.data['result']);
-		}
-		
-		private function onLoadData(event:Event):void
-		{
-			if (event.type == BattleModel.COMLETE_LOAD_DATA)
-				_view.setData(event.data['type'], event.data['data']); //设置视图数据。
-		}
-
-		public function get module():ModuleBattle
-		{
-			return _module;
+			if(evt.type == BattleModel.CHANGE_FLOOR)
+			{
+				_view.setMapdata(evt.data as Vector.<MapGridModel>);
+			}
+			else
+			{
+			}
 		}
 	}
 }

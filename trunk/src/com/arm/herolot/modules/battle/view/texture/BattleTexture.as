@@ -21,7 +21,6 @@ package com.arm.herolot.modules.battle.view.texture
 			this._texture_level_scales = new <Number>[1, 0.53, 0.53, 0.26];
 			this._texture_level_sizes = TEXTURE_LEVEL;
 			this._exportPNG = true;
-//			this._computeTextureLevelScales = true;
 		}
 
 		protected override function buildMainTexture():void
@@ -36,10 +35,10 @@ package com.arm.herolot.modules.battle.view.texture
 			 * 4 在下面添加相应的insert代码。
 			 * **/
 
-			for (var i:int = 1; i <= 5; i++)
+			for (var i:int = 0; i < 5; i++)
 			{
-				insert('ground_' + i, 'ground_' + i, scale);
-				insert('block_' + i, 'block_' + i, scale);
+				insert(GROUND + i, GROUND + i, scale);
+				insert(BLOCK + i, BLOCK + i, scale);
 			}
 			insert(TICK, TICK, scale);
 			insert(CROSS, CROSS, scale);
@@ -48,8 +47,8 @@ package com.arm.herolot.modules.battle.view.texture
 		}
 
 
-		public static const GROUND:String = 'ground';
-		public static const BLOCK:String = 'block';
+		public static const GROUND:String = 'ground_';
+		public static const BLOCK:String = 'block_';
 		public static const CROSS:String = 'cross';
 		public static const TICK:String = 'tick';
 		public static const TF_BG:String = 'tf_bg';

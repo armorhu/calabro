@@ -32,7 +32,6 @@ package com.arm.herolot.services.utils
 			_nameDict = new Dictionary();
 			
 			var linesArr:Array = _data.split("\r\n");
-			trace(linesArr.length);
 			keys = String(linesArr[0]).split(",");
 			if(!(keys[0] == 'ID' && keys[1] == 'Name'))
 			{

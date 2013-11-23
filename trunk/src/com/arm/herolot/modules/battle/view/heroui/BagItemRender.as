@@ -1,4 +1,4 @@
-package com.arm.herolot.modules.battle.view.render
+package com.arm.herolot.modules.battle.view.heroui
 {
 	import com.arm.herolot.modules.battle.battle.item.Item;
 	import com.snsapp.starling.display.Button;
@@ -7,12 +7,12 @@ package com.arm.herolot.modules.battle.view.render
 	import starling.display.Image;
 	import starling.text.TextField;
 
-	public class KnapsackItemRender extends Button
+	public class BagItemRender extends Button
 	{
 		private var _itemIcon:Image;
 		private var _itemAmount:TextField;
 
-		public function KnapsackItemRender(upState:SingleTexture)
+		public function BagItemRender(upState:SingleTexture)
 		{
 			super(upState, text, downState);
 		}

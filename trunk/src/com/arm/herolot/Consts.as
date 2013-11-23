@@ -12,6 +12,11 @@ package com.arm.herolot
 		public static const VERSION:String = '1.0';
 		public static const RSL_VERSION:int = 1;
 		public static const IP4:Rectangle = new Rectangle(0, 0, 640, 960);
+		public static const BLOCK_COUNT:int = 5;
+		public static const GROUND_COUNT:int = 5;
+		
+		public static const DOOR_ENTITY_ID:int = 1;
+		public static const KEY_ENTITY_ID:int = 2;
 
 		//==============================so-start ====================================//
 		public static const SO_CLIENT_VERSION:String = 'so_client_version';

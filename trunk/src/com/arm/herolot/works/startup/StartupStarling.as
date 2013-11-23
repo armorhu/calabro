@@ -3,6 +3,7 @@ package com.arm.herolot.works.startup
 	import com.arm.herolot.Consts;
 	import com.arm.herolot.Vars;
 	import com.arm.herolot.model.consts.ModuleDef;
+	import com.arm.herolot.modules.battle.ModuleBattle;
 	import com.arm.herolot.modules.launch.ModuleLaunch;
 	import com.arm.herolot.works.HerolotWorker;
 	import com.qzone.qfa.interfaces.IApplication;
@@ -63,10 +64,10 @@ package com.arm.herolot.works.startup
 			root.addChild(layer);
 			_app.registerModule(ModuleDef.MODULE_LAUNCH, ModuleLaunch, layer);
 
-//			//战斗模块
-//			layer = new Sprite();
-//			root.addChild(layer);
-//			_app.registerModule(Consts.MODULE_BATTLE, ModuleBattle, layer);
+			//战斗模块
+			layer = new Sprite();
+			root.addChild(layer);
+			_app.registerModule(ModuleDef.MODULE_BATTLE, ModuleBattle, layer);
 		}
 
 	}

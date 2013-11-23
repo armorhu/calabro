@@ -1,9 +1,12 @@
 package com.arm.herolot.modules.battle.map
 {
-	import com.arm.herolot.modules.battle.battle.item.Item;
-	import com.arm.herolot.modules.battle.battle.monster.Monster;
+	import com.arm.herolot.Consts;
+	import com.arm.herolot.model.config.AppConfig;
+	import com.arm.herolot.model.config.mapEntities.MapEntitiesConfig;
+	import com.arm.herolot.model.consts.MapEntityClassDef;
+	import com.arm.herolot.model.consts.MapEntityTypeDef;
 	
-	import flash.geom.Point;
+	import flash.display3D.IndexBuffer3D;
 
 	public class MapBuilder
 	{
@@ -34,11 +37,10 @@ package com.arm.herolot.modules.battle.map
 		private var _minTrapDensity:Number;
 		private var _ranGenerator:GaussianGenerator;
 
-		public function MapBuilder(rows:int, cols:int, totalFloors:int, minMonsterDensity:Number = DEFAULT_MIN_MONSTER_DESITY, maxMonsterDensity:Number = DEFAULT_MAX_MONSTER_DENSITY, minItemDensity:Number = DEFAULT_MIN_ITEM_DENSITY, maxItemDensity:Number = DEFAULT_MAX_ITEM_DENSITY, maxTrapDensity:Number = DEFAULT_MAX_TRAP_DENSITY, minTrapDensity:Number = DEFAULT_MIN_TRAP_DENSITY, gaussianLeftShift:Number = DEFAULT_GAUSSIAN_LEFT_SHIFT, gaussianRightShift:Number = DEFAULT_GAUSSIAN_RIGHT_SHIFT)
+		public function MapBuilder(rows:int, cols:int, minMonsterDensity:Number = DEFAULT_MIN_MONSTER_DESITY, maxMonsterDensity:Number = DEFAULT_MAX_MONSTER_DENSITY, minItemDensity:Number = DEFAULT_MIN_ITEM_DENSITY, maxItemDensity:Number = DEFAULT_MAX_ITEM_DENSITY, maxTrapDensity:Number = DEFAULT_MAX_TRAP_DENSITY, minTrapDensity:Number = DEFAULT_MIN_TRAP_DENSITY, gaussianLeftShift:Number = DEFAULT_GAUSSIAN_LEFT_SHIFT, gaussianRightShift:Number = DEFAULT_GAUSSIAN_RIGHT_SHIFT)
 		{
 			_rows = rows;
 			_cols = cols;
-			_totalFloors = totalFloors;
 			_minMonsterDensity = minMonsterDensity;
 			_maxMonsterDensity = maxMonsterDensity;
 			_minItemDensity = minItemDensity;
@@ -54,278 +56,387 @@ package com.arm.herolot.modules.battle.map
 			var total:int = _rows * _cols;
 			var minCount:int = Math.ceil(minDens * total);
 			var maxCount:int = Math.ceil(maxDens * total);
-//			if(_debug)trace("min monster count:" + minCount + "   max monster count:" + maxCount);
-
 			_ranGenerator = new GaussianGenerator(minCount, maxCount, minCount * (1 + gls), maxCount * (1 - grs), _totalFloors);
 		}
 
-//		public function getMatrix(floor:int):Vector.<Vector.<Object> >
-//		{
-//			if(floor > _totalFloors)
-//				return null;
-//			
-//			var retGrid:Vector.<Vector.<Object> > = new Vector.<Vector.<Object>>();
-//			retGrid.length = _rows;
-//			
-//			var grid:Vector.<Vector.<int> > = new Vector.<Vector.<int> >();
-//			grid.length = _rows;
-//			for(var i:int = 0; i < _rows; i ++)
-//			{
-//				grid[i] = _gridForRandom[i].concat();
-//				retGrid[i] = new Vector.<Object>();
-//				retGrid[i].length = _cols;
-//				for(var j:int = 0; j < _cols; j++)
-//				{
-//					retGrid[i][j] = new Object();
-//					retGrid[i][j].type = GRID_TYPE_NONE;
-////					retGrid[i][j].tileId = _tileIds[int(Math.random() * _tileIds.length)];
-////					retGrid[i][j].blockId = _blockIds[int(Math.random() * _blockIds.length)];
-//				}
-//			}
-//			
-//			var monsterCount:int = _ranGenerator.getRandom(floor);
-//			if(_debug)trace("generate monster count:" + monsterCount);
-//			
-//			/*look for max available index of monster ID according to _monsterLimits*/
-//			var maxMonsterIndex:int = _monsterLimits.length;
-//			for(var jj:int = 0; jj < _monsterLimits.length; jj++)
-//			{				
-//				if(_monsterLimits[jj] > floor)
-//				{
-//					maxMonsterIndex = jj - 1;
-//					if(_debug)trace("max avaiable monster index:" + maxMonsterIndex);
-//					break;
-//				}
-//			}
-//			
-//			
-//			/*generate random monsters*/
-//			var minLife:int = Math.ceil(0.67 * floor);
-//			var maxLife:int = Math.ceil(1.5 * floor);
-//			var minAtt:int = Math.ceil(Number(floor)/3) - 1;
-//			var maxAtt:int = minAtt + 2;
-//			while(monsterCount-- > 0)
-//			{
-//				var r:int = int(Math.random() * _rows);
-//				while(grid[r].length == 0)
-//					r++;
-//				var c:int = int(Math.random() * grid[r].length);
-//				retGrid[r][grid[r][c]].type = GRID_TYPE_MONSTER;
-//				retGrid[r][grid[r][c]].id = _monsterIds[int(Math.random() * maxMonsterIndex)];
-//				retGrid[r][grid[r][c]].hp = minLife + Math.ceil(Math.random() * (maxLife - minLife));
-//				retGrid[r][grid[r][c]].att = minAtt + Math.ceil(Math.random() * (maxAtt - minAtt));
-//				
-//				grid[r].splice(c, 1);
-//			}
-//			
-//			/*generate random items*/
-//			var itemsCount:int = _itemsPerFloor;
-//			while(itemsCount-- > 0)
-//			{
-//				var rr:int = int(Math.random() * _rows);
-//				while(grid[rr].length == 0)
-//					rr++;
-//				var cc:int = int(Math.random() * grid[rr].length);
-//				retGrid[rr][grid[rr][cc]].type = GRID_TYPE_ITEM;
-//				retGrid[rr][grid[rr][cc]].id = _itemIds[int(Math.random() * _itemIds.length)];
-//				grid[rr].splice(cc, 1);
-//			}
-//			
-//			return retGrid;
-//		}
+
+		private static const key:int =1;
+		private static const door:int = 2;
 
 		public function getMapData(floor:int):MapData
 		{
-			if (floor > _totalFloors)
-				return null;
-
-			const totalGrids:int = _rows * _cols;
-
-			/*for random position that not duplicate*/
-			var positions:Vector.<Point> = new Vector.<Point>(totalGrids);
-			for (var i:int = 0; i < _rows; i++)
-				for (var j:int = 0; j < _cols; j++)
-					positions[i * _cols + j] = new Point(i, j);
-
-			positions.sort(function compare(elementA:Object, elementB:Object):Number
+			var map:MapData = new MapData();
+			map.grids = new Vector.<MapGridData>();
+			map.grids.length = _cols * _rows;
+			map.grids.fixed = true;
+			
+			//随即生成底板和砖头的材质。
+			for(i = 0; i<map.grids.length;i++)
 			{
-				return (Math.random() - 0.5);
-			});
-
-			var matrix:Vector.<Vector.<int>> = new Vector.<Vector.<int>>(_rows);
-			for (i = 0; i < _rows; i++)
-				matrix[i] = new Vector.<int>(_cols);
-
-			/*ret map data*/
-			var mapData:MapData = new MapData();
-
-			/*random background data & grid data begin*/
-			var retGroundData:Vector.<int> = new Vector.<int>(totalGrids);
-			var retBlockData:Vector.<int> = new Vector.<int>(totalGrids);
-			for (i = 0; i < totalGrids; i++)
-			{
-				retGroundData[i] = Math.random() * 5 + 1;
-				retBlockData[i] = Math.random() * 5 + 1;
-			}
-			mapData.groundData = retGroundData;
-			mapData.blockData = retBlockData;
-			/*random background data & grid data end*/
-
-			var retMonsterData:Vector.<Monster> = new Vector.<Monster>(totalGrids);
-			var retItemData:Vector.<Item> = new Vector.<Item>(totalGrids);
-			var monsterCount:int = _ranGenerator.getRandom(floor);
-			var itemCount:int = Math.ceil(_minItemDensity * totalGrids) + Math.random() * (Math.ceil((_maxItemDensity - _minItemDensity) * totalGrids) + 1);
-//			var trapCount:int = Math.ceil(_minTrapDensity * totoalGrids) + Math.random() * (Math.ceil((_maxTrapDensity - _minTrapDensity) * totoalGrids) + 1);
-
-			trace("m:" + monsterCount + " i:" + itemCount /*+ " t:" + trapCount*/);
-
-			var monsterSrc:Vector.<Object> = getAvailableSource(Monster.CONFIG);
-//			var trapSrc:Vector.<Object> = getAvailableSource(Trap.CONFIG);
-			var itemSrc:Vector.<Object> = getAvailableSource(Item.CONFIG);
-
-//			while(trapCount--)
-//			{
-//				if(trapSrc.length > 0)
-//				{
-//					var index:int = int(trapSrc.length * Math.random());
-//					var pos:Point = positions.pop() as Point;
-//					
-//					matrix[pos.x][pos.y] |= GRID_STATUS_TRAP;
-//					
-//					if(--trapSrc[index].tmp == 0)
-//						trapSrc.splice(index, 1);
-//				}
-//			}
-
-			var retMonsters:Vector.<Monster> = new Vector.<Monster>();
-			var minLife:int = Math.ceil(0.67 * floor);
-			var maxLife:int = Math.ceil(1.5 * floor);
-			var minAtt:int = Math.ceil(Number(floor) / 3) - 1;
-			var maxAtt:int = minAtt + 2;
-
-			var keyIndex:int = Math.random() * monsterCount;
-
-			while (monsterCount--)
-			{
-				if (monsterSrc.length > 0)
-				{
-					var index:int = int(monsterSrc.length * Math.random());
-					var pos:Point = positions.pop() as Point;
-
-					matrix[pos.x][pos.y] |= GRID_STATUS_MONSTER;
-					var monster:Monster = new Monster();
-					//属性copy。
-					for (var property:String in monsterSrc[index])
-						if (monster.hasOwnProperty(property))
-							monster[property] = monsterSrc[index][property];
-					monster.id = monsterSrc[index].id;
-					monster.name = monsterSrc[index].name;
-					monster.ethnicity = monsterSrc[index].ethnicity;
-					monster.pcrit.orignal = monsterSrc[index].crit; //暴击
-					monster.pspeed.orignal = monsterSrc[index].speed; //速度
-					monster.php.orignal = minLife + Math.ceil(Math.random() * (maxLife - minLife)); //生命
-					monster.pack.orignal = minAtt + Math.ceil(Math.random() * (maxAtt - minAtt)); //攻击
-					monster.pdodge.orignal = monsterSrc[index].dodge; //闪避
-
-					retMonsterData[pos.x * _cols + pos.y] = monster;
-
-					if (monsterCount == keyIndex)
-						keyIndex = pos.x * _cols + pos.y;
-
-					if (--monsterSrc[index].tmp == 0)
-						monsterSrc.splice(index, 1);
-				}
-			}
-			mapData.monsterData = retMonsterData;
-
-			while (itemCount--)
-			{
-				if (itemSrc.length > 0)
-				{
-					//plus '2' in order to exclude the door and key
-					index = int(2 + (itemSrc.length - 2) * Math.random());
-					pos = positions.pop() as Point;
-
-					matrix[pos.x][pos.y] |= GRID_STATUS_ITEM;
-					var item:Item = new Item();
-					item.id = itemSrc[index].id;
-					item.name = itemSrc[index].name;
-					retItemData[pos.x * _cols + pos.y] = item;
-					if (--itemSrc[index].tmp == 0)
-						itemSrc.splice(index, 1);
-				}
+				map.grids[i] = new MapGridData();
+				map.grids[i].blockType = random()*Consts.BLOCK_COUNT;
+				map.grids[i].groundType = random()*Consts.GROUND_COUNT;
 			}
 
-			/*door*/
-			var doorPos:Point = positions.pop();
-			matrix[doorPos.x][doorPos.y] |= GRID_STATUS_CAN_BE_OPENED | GRID_STATUS_ITEM;
-			var door:Item = new Item();
-			door.id = itemSrc[1].id;
-			door.name = itemSrc[1].name;
-			retItemData[doorPos.x * _cols + doorPos.y] = door;
+			//生成格子的index池子
+			var posPool:Vector.<int> = new Vector.<int>();
+			posPool.length = map.grids.length;
+			for (var i:int = 0; i < posPool.length; i++)
+				posPool[i] = i;
 
-			/*key hide under monster*/
-			var key:Item = new Item();
-			key.id = itemSrc[0].id;
-			key.name = itemSrc[0].name;
-			retItemData[keyIndex] = key;
-			matrix[int(keyIndex / _cols)][keyIndex % _cols] |= GRID_STATUS_ITEM;
-//			trace("key pos:", int(keyIndex / _cols), keyIndex % _cols);
+			map.door = randomIndex();
+			map.grids[map.door].entity.id = door;
 
-			mapData.itemData = retItemData;
+			//获取当前楼层能够用的元素池子
+			var availableEntitityDict:Object = getFloorAvailableEntities(floor);
+			//特殊事件生成。。。todo
 
-			mapData.matrixData = matrix;
-			mapData.doorPosition = doorPos;
-			mapData.hasKey = false;
-			mapData.level = floor;
-			return mapData;
+			//元素的覆盖率
+			var entityCoverProbality:Number = getFloorCoverProbality(floor);
+			var entitySum:int = Math.round(restMapSize() * entityCoverProbality);
+			var badCoverProbality:Number = 0.5 + random();
+			var badSum:int = Math.round(entitySum * badCoverProbality);
+			var goodSum:int = entitySum - badSum;
+			
+			var badList:Vector.<MapEntityData> = generateBadList(badSum);
+			var monsterList:Vector.<MapEntityData> = getMonsterList();
+			var goodList:Vector.<MapEntityData> = generateGoodList(goodSum);
+			var dropList:Vector.<MapEntityData> = getDropList();
+			
+			//给钥匙找一个怪物。
+			//随机摆放怪物
+			var len:int = monsterList.length;
+			if(len == 0)
+				throw new Error('怪物数量为0');
+			var keyIndex:int = random()*len;
+			for (i = 0; i < len; i++) {
+				map.grids[randomIndex()].entity = monsterList[i];
+				if(keyIndex == i)
+					monsterList[i].dropID = key;
+			}
+			
+			
+			
+			
+			return map;
 
-			/*this method select the available src according to the given floor*/
-			function getAvailableSource(config:Object):Vector.<Object>
+			function getMonsterList():Vector.<MapEntityData>
 			{
-				var ret:Vector.<Object> = new Vector.<Object>();
-				var limit:String;
-				var reg:RegExp = new RegExp("\\s*\\[\\s*\\d+\\s*,\\s*\\d+\\s*\\]\\s*"); /*match format like [4,6]*/
-				var segs:Array;
-				for (var id:String in config)
+				var result:Vector.<MapEntityData> = new Vector.<MapEntityData>();
+				const len:int = badList.length;
+				for (var j:int = len-1; j >=0; j--)
 				{
-					limit = config[id].appearAt as String;
-					if (limit == "-1")
-						continue;
-
-					segs = limit.split("/");
-					const segCount:uint = segs.length;
-					for (var l:uint = 0; l < segCount; l++)
-					{
-						if (String(segs[l]).match(reg) != null)
-						{
-							var index:int = String(segs[l]).search(",");
-							var min:int = int(String(segs[l]).substr(1, index - 1));
-							var max:int = int(String(segs[l]).substr(index + 1, String(segs[l]).length - 1 - index - 1));
-
-							if (floor >= min && floor <= max)
-							{
-								/*tmp may be used later*/
-								config[id].tmp = config[id].maxPerFloor;
-								config[id].id = id;
-								ret.push(config[id]);
-								break;
-							}
-
-						}
-						else if (int(segs[l]) == floor)
-						{
-							/*tmp may be used later*/
-							config[id].tmp = config[id].maxPerFloor;
-							config[id].id = id;
-							ret.push(config[id]);
-							break;
-						}
+					if (isMonster(badList[j].id)){
+						result.push(badList[j]);
+						badList.splice(j,1);
 					}
 				}
-				return ret;
+				return result;
 			}
 
+			function getDropList():Vector.<MapEntityData>
+			{
+				var result:Vector.<MapEntityData> = new Vector.<MapEntityData>();
+				const len:int = goodList.length;
+				for (var j:int = len-1; j >=0; j--)
+				{
+					if (isDrop(goodList[j].id)){
+						result.push(goodList[j]);
+						goodList.splice(j,1);
+					}
+				}
+				return result;
+			}
+
+
+			function isDrop(id:int):Boolean
+			{
+				var config:MapEntitiesConfig = AppConfig.mapEntitiesConfigModel.getMapEntitiesConfigByID(id);
+				return config.EntityType == MapEntityTypeDef.EQUIP || config.EntityType == MapEntityTypeDef.MAGIC || config.EntityType == MapEntityTypeDef.MEDICINE
+			}
+			
+			function isMonster(id:int):Boolean
+			{
+				var config:MapEntitiesConfig = AppConfig.mapEntitiesConfigModel.getMapEntitiesConfigByID(id);
+				return config.EntityType == MapEntityTypeDef.MONSTER;
+			}
+
+			function dropable(id:int):Boolean
+			{
+				var config:MapEntitiesConfig = AppConfig.mapEntitiesConfigModel.getMapEntitiesConfigByID(id);
+				return config.Dropable;
+			}
+
+			function generateBadList(badSum:int):Vector.<MapEntityData>
+			{
+				var entityData:MapEntityData;
+				var monsterPool:Vector.<int> = getRandomPool(availableEntitityDict[MapEntityTypeDef.MONSTER]);
+				var result:Vector.<MapEntityData> = new Vector.<MapEntityData>();
+				var basicMonsterCount:int = badSum > 3 ? 3 : badSum;
+				badSum -= basicMonsterCount;
+
+				if (monsterPool.length > 0)
+					for (j = 0; j < basicMonsterCount; j++)
+					{
+						entityData = new MapEntityData();
+						entityData.id = monsterPool[int(monsterPool.length*random())];
+						result.push(entityData);
+					}
+
+				var badRandomPool:Vector.<int> = getRandomPool(availableEntitityDict[MapEntityClassDef.BAD]);
+				var len:int = badRandomPool.length;
+				if (len > 0)
+					for (var j:int = 0; j < badSum; j++)
+					{
+						entityData = new MapEntityData();
+						entityData.id = badRandomPool[int(len*random())];
+						result.push(entityData);
+					}
+				return result;
+			}
+
+			function generateGoodList(goodSum:int):Vector.<MapEntityData>
+			{
+				var goodRandomPool:Vector.<int> = getRandomPool(availableEntitityDict[MapEntityClassDef.GOOD]);
+				var len:int = goodRandomPool.length;
+				var result:Vector.<MapEntityData> = new Vector.<MapEntityData>();
+				var entityData:MapEntityData;
+				if (len > 0)
+					for (var j:int = 0; j < goodSum; j++)
+					{
+						entityData = new MapEntityData();
+						entityData.id = goodRandomPool[int(len*random())];
+						result.push(entityData);
+					}
+				return result;
+			}
+
+
+			function randomIndex():int
+			{
+				var randomId:int = int(posPool.length * random());
+				return posPool.splice(randomId, 1)[0]
+			}
+
+			function restMapSize():int
+			{
+				return posPool.length;
+			}
+
+			/**
+			 * 获取当前楼层的可获得的实体
+			 * @return
+			 */
+			function getFloorAvailableEntities(floor:int):Object
+			{
+				var result:Object = {};
+				const len:int = AppConfig.mapEntitiesConfigModel.mapEntities.length;
+				for (var j:int = 0; j < len; j++)
+				{
+					if (AppConfig.mapEntitiesConfigModel.mapEntities[j].MaxAppearFloor >= floor && AppConfig.mapEntitiesConfigModel.mapEntities[j].MinAppearFloor <= floor)
+						push(result, AppConfig.mapEntitiesConfigModel.mapEntities[j]);
+				}
+				return result;
+			}
+
+			function push(obj:Object, entity:MapEntitiesConfig):void
+			{
+				if (obj[entity.EntityClass] == undefined)
+					obj[entity.EntityClass] = new Vector.<MapEntitiesConfig>;
+				if (obj[entity.EntityType] == undefined)
+					obj[entity.EntityType] = new Vector.<MapEntitiesConfig>;
+				(obj[entity.EntityType] as Vector.<MapEntitiesConfig>).push(entity);
+				(obj[entity.EntityClass] as Vector.<MapEntitiesConfig>).push(entity);
+			}
+
+			function getRandomPool(source:Vector.<MapEntitiesConfig>):Vector.<int>
+			{
+				var pool:Vector.<int> = new Vector.<int>();
+				if(source)
+				{
+					const len:int = source.length;
+					for (var j:int = 0; j < len; j++)
+					{
+						for (var k:int = 0; k < source[j].RandomWeight; k++)
+							pool.push(source[j].ID);
+					}
+				}
+		
+				return pool;
+			}
 		}
+
+
+
+		private function random():Number
+		{
+			return Math.random();
+		}
+
+		/**
+		 * 返回楼层的覆盖率
+		 * @param floor
+		 */
+		private function getFloorCoverProbality(floor:int):Number
+		{
+			var result:Number = 0.3 + int(floor / 10) / 10;
+			if (result >= 0.7)
+				return 0.7;
+			else
+				return result
+		}
+
+
+//		public function getMapData(floor:int):MapData
+//		{
+//		}
+
+
+//		public function getMapData(floor:int):MapData
+//		{
+//			if (floor > _totalFloors)
+//				return null;
+//
+//			const totalGrids:int = _rows * _cols;
+//
+//			/*for random position that not duplicate*/
+//			var positions:Vector.<Point> = new Vector.<Point>(totalGrids);
+//			for (var i:int = 0; i < _rows; i++)
+//				for (var j:int = 0; j < _cols; j++)
+//					positions[i * _cols + j] = new Point(i, j);
+//
+//			positions.sort(function compare(elementA:Object, elementB:Object):Number
+//			{
+//				return (Math.random() - 0.5);
+//			});
+//
+//			var matrix:Vector.<Vector.<int>> = new Vector.<Vector.<int>>(_rows);
+//			for (i = 0; i < _rows; i++)
+//				matrix[i] = new Vector.<int>(_cols);
+//
+//			/*ret map data*/
+//			var mapData:MapData = new MapData();
+//
+//			/*random background data & grid data begin*/
+//			var retGroundData:Vector.<int> = new Vector.<int>(totalGrids);
+//			var retBlockData:Vector.<int> = new Vector.<int>(totalGrids);
+//			for (i = 0; i < totalGrids; i++)
+//			{
+//				retGroundData[i] = Math.random() * 5 + 1;
+//				retBlockData[i] = Math.random() * 5 + 1;
+//			}
+//			mapData.groundData = retGroundData;
+//			mapData.blockData = retBlockData;
+//			/*random background data & grid data end*/
+//
+//			var retMonsterData:Vector.<Monster> = new Vector.<Monster>(totalGrids);
+//			var retItemData:Vector.<Item> = new Vector.<Item>(totalGrids);
+//			var monsterCount:int = _ranGenerator.getRandom(floor);
+//			var itemCount:int = Math.ceil(_minItemDensity * totalGrids) + Math.random() * (Math.ceil((_maxItemDensity - _minItemDensity) * totalGrids) + 1);
+////			var trapCount:int = Math.ceil(_minTrapDensity * totoalGrids) + Math.random() * (Math.ceil((_maxTrapDensity - _minTrapDensity) * totoalGrids) + 1);
+//
+//			trace("m:" + monsterCount + " i:" + itemCount /*+ " t:" + trapCount*/);
+//
+//			var monsterSrc:Vector.<MapEntitiesConfig> = getAvailableSource(MapEntityTypeDef.MONSTER);
+//			var itemSrc:Vector.<MapEntitiesConfig> = getAvailableSource(MapEntityTypeDef.ITEM);
+//
+//			var temp:Object = {};
+//
+//			var retMonsters:Vector.<Monster> = new Vector.<Monster>();
+//			var minLife:int = Math.ceil(0.67 * floor);
+//			var maxLife:int = Math.ceil(1.5 * floor);
+//			var minAtt:int = Math.ceil(Number(floor) / 3) - 1;
+//			var maxAtt:int = minAtt + 2;
+//
+//			var keyIndex:int = Math.random() * monsterCount;
+//
+//			while (monsterCount--)
+//			{
+//				if (monsterSrc.length > 0)
+//				{
+//					var index:int = int(monsterSrc.length * Math.random());
+//					var pos:Point = positions.pop() as Point;
+//
+//					matrix[pos.x][pos.y] |= GRID_STATUS_MONSTER;
+//					var monster:Monster = new Monster(monsterSrc[index].ID);
+//					monster.crit_proxy.orignal = monsterSrc[index].Crit / 100; //暴击
+//					monster.speed_proxy.orignal = monsterSrc[index].Speed; //速度
+//					monster.dodge_proxy.orignal = monsterSrc[index].Dudoge / 100; //闪避
+//
+//					monster.hp_proxy.orignal = minLife + Math.ceil(Math.random() * (maxLife - minLife)); //生命
+//					monster.ack_proxy.orignal = minAtt + Math.ceil(Math.random() * (maxAtt - minAtt)); //攻击
+//
+//					retMonsterData[pos.x * _cols + pos.y] = monster;
+//
+//					if (monsterCount == keyIndex)
+//						keyIndex = pos.x * _cols + pos.y;
+//					temp[monsterSrc[index].ID] = int(temp[monsterSrc[index].ID]) + 1;
+//					if (monsterSrc[index].MaxAppearFloor == temp[monsterSrc[index].ID])
+//						monsterSrc.splice(index, 1);
+//				}
+//			}
+//			mapData.monsterData = retMonsterData;
+//
+//			while (itemCount--)
+//			{
+//				if (itemSrc.length > 0)
+//				{
+//					//plus '2' in order to exclude the door and key
+//					index = int(2 + (itemSrc.length - 2) * Math.random());
+//					pos = positions.pop() as Point;
+//
+//					matrix[pos.x][pos.y] |= GRID_STATUS_ITEM;
+//					var item:Item = new Item(itemSrc[index].ID);
+//					retItemData[pos.x * _cols + pos.y] = item;
+//
+//
+//					temp[itemSrc[index].ID] = int(temp[itemSrc[index].ID]) + 1;
+//					if (itemSrc[index].MaxPerFloor == temp[itemSrc[index].ID])
+//						itemSrc.splice(index, 1);
+//				}
+//			}
+//
+//			/*door*/
+//			var doorPos:Point = positions.pop();
+//			matrix[doorPos.x][doorPos.y] |= GRID_STATUS_CAN_BE_OPENED | GRID_STATUS_ITEM;
+//			var door:Item = new Item(2);
+//			retItemData[doorPos.x * _cols + doorPos.y] = door;
+//
+//			/*key hide under monster*/
+//			var key:Item = new Item(1);
+//			retItemData[keyIndex] = key;
+//			matrix[int(keyIndex / _cols)][keyIndex % _cols] |= GRID_STATUS_ITEM;
+////			trace("key pos:", int(keyIndex / _cols), keyIndex % _cols);
+//
+//			mapData.itemData = retItemData;
+//
+//			mapData.matrixData = matrix;
+//			mapData.doorPosition = doorPos;
+//			mapData.hasKey = false;
+//			return mapData;
+//
+//			/*this method select the available src according to the given floor*/
+//			function getAvailableSource(type:String):Vector.<MapEntitiesConfig>
+//			{
+//				var ret:Vector.<MapEntitiesConfig> = new Vector.<MapEntitiesConfig>();
+//				const len:int = AppConfig.mapEntitiesConfigModel.mapEntities.length;
+//
+//				for (var k:int = 0; k < len; k++)
+//				{
+//					if (AppConfig.mapEntitiesConfigModel.mapEntities[k].Name == 'door' || AppConfig.mapEntitiesConfigModel.mapEntities[k].Name == 'key')
+//					{
+//						continue;
+//					}
+//
+//					if (AppConfig.mapEntitiesConfigModel.mapEntities[k].Type == type)
+//					{
+//						if (floor >= AppConfig.mapEntitiesConfigModel.mapEntities[k].MinAppearFloor //
+//							&& floor <= AppConfig.mapEntitiesConfigModel.mapEntities[k].MaxAppearFloor)
+//							ret.push(AppConfig.mapEntitiesConfigModel.mapEntities[k]);
+//					}
+//				}
+//				return ret;
+//			}
+//		}
 	}
 }

@@ -161,6 +161,7 @@ package com.snsapp.starling.texture.implement
 			var texture:Texture=_atlas.getTexture(textureName);
 			var setting:Object=_textureSettings[textureName];
 			var scaleRect:Rectangle;
+			trace(textureName);
 			if (setting['scale9Grid'] != undefined)
 			{
 				scaleRect=new Rectangle();

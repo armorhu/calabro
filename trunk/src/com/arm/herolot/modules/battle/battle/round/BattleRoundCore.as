@@ -23,16 +23,21 @@ package com.arm.herolot.modules.battle.battle.round
 		 * @param defenser
 		 * 返回一个战斗结果数组。
 		 */
+		/**
+		 *
+		 * @param attacker
+		 * @param defenser
+		 * @return
+		 *
+		 */
 		public static function round(attacker:BattleEntity, defenser:BattleEntity):BattleRound
 		{
 			var round:BattleRound = new BattleRound();
-			round.attackerResult = new AttackResult();
-			round.attackerTemp = new AttackTemp();
-			round.attackerTemp.entity = attacker;
-
-			round.defenseResult = new AttackResult();
-			round.defenseTemp = new AttackTemp();
-			round.defenseTemp.entity = defenser;
+			round.a = attacker, round.d = defenser;
+			round.at = new AttackTemp();
+			round.ar = new AttackResult();
+			round.dt = new AttackTemp();
+			round.dr = new AttackResult();
 
 			//攻击前判定
 			if (attacker.buffers)
@@ -41,38 +46,53 @@ package com.arm.herolot.modules.battle.battle.round
 			if (defenser.buffers)
 				for (i = 0, len = defenser.buffers.length; i < len; i++)
 					defenser.buffers[i].before_injured(round);
-
 			//战斗模型
 
 			//先判定是否会闪避
-			if (GameMath.random(round.defenseTemp.dodge / 100))
+			//闪避的概率
+			var dodgeProbablity:Number = round.dt.dodgeAdd + defenser.dodge;
+			if (GameMath.random(dodgeProbablity))
 			{ //闪避了！
-				round.defenseResult.dodge = true;
+				round.dr.dodge = true;
 			}
 			else
 			{
-				round.defenseResult.dodge = false;
-
+				round.dr.dodge = false;
+				//计算攻击者的攻击
+				var ack:Number = attacker.ack * (1 + round.at.ackPer) + round.at.ackAdd;
+				var armor:Number = defenser.armor * (1 + round.dt.armorPer) + round.dt.armorAdd;
 				//本游戏的伤害计算就是：我的攻击-他的防御
-				var damage:int = Math.round(round.attackerTemp.attack - round.defenseTemp.armor);
+				var damage:int = Math.round(ack - armor);
+
+				//计算暴击率
+				var critProbablity:Number = round.at.critAdd + attacker.crit;
 				//看看有没有暴击
-				if (GameMath.random(round.attackerTemp.crit / 100))
+				if (GameMath.random(critProbablity))
 				{
-					damage *= round.attackerTemp.critFactor;
-					round.defenseResult.crit = true;
+					damage *= attacker.critFator;
+					round.dr.crit = true;
 				}
 				else
 				{
-					round.defenseResult.crit = false;
+					round.dr.crit = false;
 				}
 				//伤害最少为1
 				if (damage < 1) //最少1.
 					damage = 1;
-				round.defenseResult.damage = damage;
+				round.dr.damage = damage;
 				//真正把伤害给扣了。
 				defenser.hp -= damage;
 			}
 
+			if (defenser.hp <= 0)
+			{ //目标死掉了！！。
+				defenser.hp = 0;
+				round.dr.die = true;
+			}
+			else
+			{
+				round.dr.die = false;
+			}
 
 			//攻击后判定
 			if (attacker.buffers)
@@ -82,14 +102,6 @@ package com.arm.herolot.modules.battle.battle.round
 				for (i = 0, len = defenser.buffers.length; i < len; i++)
 					defenser.buffers[i].after_injured(round);
 
-			if (defenser.hp <= 0)
-			{ //目标死掉了！！。
-				round.defenseResult.die = true;
-			}
-			else
-			{
-				round.defenseResult.die = false;
-			}
 
 			return round;
 		}

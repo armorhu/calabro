@@ -13,7 +13,7 @@ package com.arm.herolot.model.config
 	import com.arm.herolot.model.config.skills.SkillsConfigModel;
 	import com.arm.herolot.model.config.buffers.BuffersConfigModel;
 	import com.arm.herolot.model.config.heros.HerosConfigModel;
-	import com.arm.herolot.model.config.entities.EntitiesConfigModel;
+	import com.arm.herolot.model.config.mapEntities.MapEntitiesConfigModel;
 	/**自动生成的import代码--end**/
 	//==========================不要动我!!!!!!!========================//
 	/**
@@ -28,7 +28,7 @@ package com.arm.herolot.model.config
 		public var skillsConfigModel:SkillsConfigModel;
 		public var buffersConfigModel:BuffersConfigModel;
 		public var herosConfigModel:HerosConfigModel;
-		public var entitiesConfigModel:EntitiesConfigModel;
+		public var mapEntitiesConfigModel:MapEntitiesConfigModel;
 		/**自动生成的属性代码--end**/
 		//==========================不要动我!!!!!!!========================//
 		public var flashvars:Object;
@@ -56,8 +56,8 @@ package com.arm.herolot.model.config
 			bindle("config/buffers.csv",buffersConfigModel);
 			herosConfigModel = new HerosConfigModel;
 			bindle("config/heros.csv",herosConfigModel);
-			entitiesConfigModel = new EntitiesConfigModel;
-			bindle("config/entities.csv",entitiesConfigModel);
+			mapEntitiesConfigModel = new MapEntitiesConfigModel;
+			bindle("config/mapEntities.csv",mapEntitiesConfigModel);
 		/**自动生产的logic代码--end**/
 			//==========================不要动我!!!!!!!========================//
 		}
@@ -74,12 +74,12 @@ package com.arm.herolot.model.config
 //			for (var i:int = 0; i < len; i++)
 //				app.loadResource(_urls[i], loadConfigComplete);
 			
-			app.loadResource(_urls[0],loadConfigComplete);
+			app.loadResourceWithOutCache(_urls[0],loadConfigComplete);
 		}
 
 		private function loadConfigComplete(res:Resource):void
 		{
-			trace(res.url);
+			trace(res.url,res.data);
 			var idx:int = _urls.indexOf(res.url);
 			if (idx == -1)
 				return;
@@ -89,7 +89,6 @@ package com.arm.herolot.model.config
 			Debugger.log('init:'+res.url,'cost:'+(getTimer()-time)+'ms',LogType.ASSERT);
 			_iConfigs.splice(idx, 1);
 			_urls.splice(idx, 1);
-			trace(_urls.length);
 			if (_urls.length == 0)
 			{
 				workComplete();

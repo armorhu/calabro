@@ -1,11 +1,9 @@
-package com.arm.herolot.modules.battle.view.layer
+package com.arm.herolot.modules.battle.view.heroui
 {
 	import com.arm.herolot.HerolotApplication;
 	import com.arm.herolot.Vars;
 	import com.arm.herolot.modules.battle.battle.hero.HeroModel;
-	import com.arm.herolot.modules.battle.BattleModel;
 	import com.arm.herolot.modules.battle.battle.item.Item;
-	import com.arm.herolot.modules.battle.map.MapData;
 	import com.arm.herolot.modules.battle.view.texture.BattleTexture;
 	import com.arm.herolot.services.utils.EmbedFont;
 	import com.snsapp.starling.StarlingFactory;
@@ -13,7 +11,7 @@ package com.arm.herolot.modules.battle.view.layer
 	import com.snsapp.starling.texture.implement.BatchTexture;
 	import com.snsapp.starling.texture.implement.SingleTexture;
 	import com.snsapp.starling.texture.implement.TextureBase;
-
+	
 	import starling.display.DisplayObject;
 	import starling.display.Image;
 	import starling.display.Sprite;
@@ -21,13 +19,12 @@ package com.arm.herolot.modules.battle.view.layer
 	import starling.text.TextField;
 	import starling.utils.HAlign;
 	import starling.utils.VAlign;
-	import com.arm.herolot.modules.battle.view.render.KnapsackItemRender;
 
 	/**
 	 * 英雄信息&道具栏视图。。。
 	 * PS：HeroLayer不妥，有没有更好的命名？
 	 */
-	public class HeroLayer extends Sprite
+	public class HeroUIView extends Sprite
 	{
 		private var _heroIcon:Image;
 		private var _heroTexture:TextureBase;
@@ -44,7 +41,7 @@ package com.arm.herolot.modules.battle.view.layer
 		private var H_GAP:Number = 10;
 		private var V_GAP:Number = 10;
 
-		public function HeroLayer(batch:BatchTexture)
+		public function HeroUIView(batch:BatchTexture)
 		{
 			super();
 			_scale = Vars.starlingScreenScale;
@@ -60,14 +57,14 @@ package com.arm.herolot.modules.battle.view.layer
 			_itemContainer.x = 300 * _scale;
 			_itemContainer.y = 15 * _scale;
 			addChild(_itemContainer);
-			var item:KnapsackItemRender;
+			var item:BagItemRender;
 			const texture:SingleTexture = _batch.getTexture(BattleTexture.EQUIP_BOX);
 			const cell:Number = texture.width;
 			for (var i:int = 0; i < R; i++)
 			{
 				for (var j:int = 0; j < C; j++)
 				{
-					item = new KnapsackItemRender(texture);
+					item = new BagItemRender(texture);
 					item.x = j * (cell + H_GAP);
 					item.y = i * (cell + V_GAP);
 					item.addEventListener(Event.TRIGGERED, tiggerItemBox);
@@ -83,8 +80,8 @@ package com.arm.herolot.modules.battle.view.layer
 		{
 			//加载英雄头像
 			HerolotApplication.instance.textureLoader.addEventListener(TextureLoadEvent.COMPLETE, onLoadTextureComplete);
-			_heroTextureName = HerolotApplication.instance.textureLoader.getCacheURL(hero.getSmailAssetsURL());
-			HerolotApplication.instance.textureLoader.requestTexture(hero.getSmailAssetsURL(), false);
+			_heroTextureName = HerolotApplication.instance.textureLoader.getCacheURL(hero.config.SmallPicURL);
+			HerolotApplication.instance.textureLoader.requestTexture(hero.config.SmallPicURL, false);
 			_heroHP.text = '生命:' + hero.hp;
 			_heroACK.text = '攻击:' + hero.ack;
 		}
@@ -103,10 +100,10 @@ package com.arm.herolot.modules.battle.view.layer
 		private function setItemData(items:Vector.<Item>):void
 		{
 			const len:int = _itemContainer.numChildren;
-			var item:Item, render:KnapsackItemRender;
+			var item:Item, render:BagItemRender;
 			for (var i:int = 0; i < len; i++)
 			{
-				render = _itemContainer.getChildAt(i) as KnapsackItemRender;
+				render = _itemContainer.getChildAt(i) as BagItemRender;
 				if (items && items.length > i)
 					render.setItem(items[i]);
 				else
@@ -114,15 +111,15 @@ package com.arm.herolot.modules.battle.view.layer
 			}
 		}
 
-		public function setData(type:String, data:Object):void
-		{
-			if (type == BattleModel.DATA_HERO)
-				setHeroData(data as HeroModel);
-			else if (type == BattleModel.DATA_MAP)
-				setLevel(MapData(data).level);
-			else if (type == BattleModel.DATA_ITEMS)
-				setItemData(data as Vector.<Item>);
-		}
+//		public function setData(type:String, data:Object):void
+//		{
+//			if (type == BattleModel.DATA_HERO)
+//				setHeroData(data as HeroModel);
+//			else if (type == BattleModel.DATA_MAP)
+//				setLevel(MapData(data).level);
+//			else if (type == BattleModel.DATA_ITEMS)
+//				setItemData(data as Vector.<Item>);
+//		}
 
 		private function tiggerItemBox(evt:Event):void
 		{

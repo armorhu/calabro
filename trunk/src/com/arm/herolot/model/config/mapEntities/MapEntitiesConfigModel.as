@@ -1,14 +1,14 @@
-package com.arm.herolot.model.config.entities
+package com.arm.herolot.model.config.mapEntities
 {
 	import com.arm.herolot.model.config.IConfigModel;
 	import com.arm.herolot.services.utils.CSVFile;
 	
 
-	public class EntitiesConfigModel implements IConfigModel
+	public class MapEntitiesConfigModel implements IConfigModel
 	{
-		public var entities:Vector.<EntitiesConfig>;
+		public var mapEntities:Vector.<MapEntitiesConfig>;
 
-		public function EntitiesConfigModel()
+		public function MapEntitiesConfigModel()
 		{
 		}
 
@@ -19,17 +19,17 @@ package com.arm.herolot.model.config.entities
 			const keyLen:int = csvFile.keys.length;
 			const lineNum:int = csvFile.valueTables.length;
 
-			entities = new Vector.<EntitiesConfig>();
-			entities.length = lineNum;
+			mapEntities = new Vector.<MapEntitiesConfig>();
+			mapEntities.length = lineNum;
 
 			for (var i:int = 0; i < lineNum; i++)
 			{
-				entities[i] = new EntitiesConfig();
+				mapEntities[i] = new MapEntitiesConfig();
 
 				for (var j:int = 0; j < keyLen; j++)
-					entities[i][csvFile.keys[j]] = csvFile.getValue(i,j,i);
+					mapEntities[i][csvFile.keys[j]] = csvFile.getValue(i,j,i);
 			}
-			entities.fixed = true;
+			mapEntities.fixed = true;
 			csvFile.dispose();
 			csvFile = null;
 		}
@@ -40,14 +40,14 @@ package com.arm.herolot.model.config.entities
 		 * @param level 从1开始
 		 * @return
 		 */
-		public function getEntitiesConfigByID(id:int):EntitiesConfig
+		public function getMapEntitiesConfigByID(id:int):MapEntitiesConfig
 		{
-			const len:int = entities.length;
+			const len:int = mapEntities.length;
 
 			for (var i:int = 0; i < len; i++)
 			{
-				if (entities[i].ID == id)
-					return entities[i];
+				if (mapEntities[i].ID == id)
+					return mapEntities[i];
 			}
 			return null;
 		}
