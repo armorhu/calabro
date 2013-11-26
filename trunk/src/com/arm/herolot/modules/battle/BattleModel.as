@@ -1,128 +1,113 @@
 package com.arm.herolot.modules.battle
 {
-	import com.arm.herolot.Consts;
 	import com.arm.herolot.modules.battle.battle.hero.HeroModel;
-	import com.arm.herolot.modules.battle.map.MapBuilder;
-	import com.arm.herolot.modules.battle.map.MapData;
-	import com.arm.herolot.modules.battle.map.MapMath;
-	import com.arm.herolot.modules.battle.model.MapGridModel;
+	import com.arm.herolot.modules.battle.battle.round.BattleRound;
+	import com.arm.herolot.modules.battle.battle.round.BattleRoundCore;
+	import com.arm.herolot.modules.battle.model.battleui.BattleuiModel;
+	import com.arm.herolot.modules.battle.model.map.MapDataModel;
+	import com.arm.herolot.modules.battle.model.map.entities.MonsterModel;
 
-	import starling.animation.IAnimatable;
+	import starling.core.Starling;
 	import starling.events.Event;
 	import starling.events.EventDispatcher;
 
-	public class BattleModel extends EventDispatcher implements IAnimatable
+	public class BattleModel extends EventDispatcher
 	{
 		/**
 		 *更改层级
 		 */
-		public static const CHANGE_FLOOR:String = 'change_floor'
-
-		private var _hero:HeroModel;
-
-		private var _mapBuilder:MapBuilder;
-		/**
-		 *地图的格子数据模型
-		 */
-		public var mapGrids:Vector.<MapGridModel>;
-
-		public var mapData:MapData;
+		public static const CHANGE_FLOOR:String = 'change_floor';
 
 		/**
-		 *当前层数
+		 *英雄攻击.(一个回合)
 		 */
-		private var _currentFloor:int;
+		public static const HERO_ATTACK:String = 'hero_attack';
 
+		/**
+		 *怪物攻击.(英雄无法反击)
+		 */
+		public static const MONSTER_ATTACK:String = 'monster_attack';
+
+		/**
+		 *战斗结束
+		 */
+		public static const BATTLE_RESULT:String = 'battle_result';
+
+		public var mapDataModel:MapDataModel;
+		public var battleuiModel:BattleuiModel;
+
+		public var floor:int;
 
 		public function BattleModel()
 		{
 		}
 
-
 		public function start(hero:HeroModel):void
 		{
-			_hero = hero;
-			_mapBuilder = new MapBuilder( //
-				Consts.MAP_ROWS, //
-				Consts.MAP_COLS, //
-				Consts.TOTAL_FLOORS_COUNT);
+			addEventListener(HERO_ATTACK, modelEventHandler);
+			addEventListener(MONSTER_ATTACK, modelEventHandler);
+			mapDataModel = new MapDataModel(this);
+			Starling.juggler.add(mapDataModel);
 
-			mapGrids = new Vector.<MapGridModel>();
-			mapGrids.length = Consts.MAP_COLS * Consts.MAP_ROWS;
-			mapGrids.fixed = true;
-			_currentFloor = 0;
+			battleuiModel = new BattleuiModel(this);
+			battleuiModel.initialize(hero);
+			floor = 0;
 		}
 
 		public function nextFloor():void
 		{
-			mapData = _mapBuilder.getMapData(++_currentFloor);
-			var len:int = mapGrids.length;
-			for (var i:int = 0; i < len; i++)
-			{
-				if (mapGrids[i])
-				{
-					mapGrids[i].removeEventListener(MapGridModel.OPEN, gridModelEventHandler);
-					mapGrids[i].dispose();
-					mapGrids[i] = null;
-				}
-
-				mapGrids[i] = MapGridModel.createMapEntityModel(mapData.grids[i], i, _currentFloor);
-				mapGrids[i].addEventListener(MapGridModel.OPEN, gridModelEventHandler);
-
-			}
-
-			//把门所在的那个格子打开
-			mapGrids[mapData.door].lock = false;
-			mapGrids[mapData.door].reachable = true;
-
-			dispatchEventWith(CHANGE_FLOOR, false, mapGrids);
+			mapDataModel.createFloor(++floor);
+			dispatchEventWith(CHANGE_FLOOR, false, floor);
 		}
 
-
-		private function gridModelEventHandler(evt:Event):void
+		private function modelEventHandler(evt:Event):void
 		{
-			var gridModel:MapGridModel = evt.target as MapGridModel;
-			if (evt.type == MapGridModel.OPEN)
+			if (evt.type == HERO_ATTACK)
 			{
-				var arounds:Vector.<int> = MapMath.getAroundGridIds(gridModel.gid);
-				var len:int = arounds.length;
-				for (var i:int = 0; i < len; i++)
-				{
-					//变的可以达到了
-					if (!mapGrids[arounds[i]].reachable)
-						mapGrids[arounds[i]].reachable = true;
-					if (!mapGrids[arounds[i]].open)
-						mapGrids[arounds[i]].lock = checkGridIsLock(arounds[i]);
-				}
-
+				var monster:MonsterModel = evt.data as MonsterModel;
+				heroAttack(monster);
 			}
 		}
 
-		public function advanceTime(time:Number):void
+		public function heroAttack(monster:MonsterModel):void
 		{
-			if (mapGrids)
+			//比速度
+			var heroSpeed:Number = battleuiModel.hero.speed;
+			var monsterSpeed:Number = monster.battleEntity.speed;
+			if (Math.random() < heroSpeed / (heroSpeed + monsterSpeed))
 			{
-				var len:int = mapGrids.length;
-				for (var i:int = 0; i < len; i++)
-					mapGrids[i].advanceTime(time);
+				//英雄先出手。
+				progressHeroAttack(monster)
+				progressMonsterAttack(monster)
+			}
+			else
+			{
+				//怪物先出手。
+				progressMonsterAttack(monster);
+				progressHeroAttack(monster);
 			}
 		}
 
-		/**
-		 * 检查某个格子是否被锁
-		 * @param gid
-		 * @return 锁上返回true，否则返回false
-		 */
-		public function checkGridIsLock(gid:int):Boolean
+
+		private function progressHeroAttack(monster:MonsterModel):void
 		{
-			var aroundGids:Vector.<int> = MapMath.getAroundGridIds(gid);
-			var len:int = aroundGids.length;
-			for (var i:int = 0; i < len; i++)
-			{
-				if (mapGrids[aroundGids[i]].hasMonster)
-					return true;
-			}
-			return false;
+			if (battleuiModel.hero.hp <= 0 || monster.battleEntity.hp <= 0)
+				return;
+			var result:BattleRound = BattleRoundCore.round(battleuiModel.hero, monster.battleEntity);
+			battleuiModel.modelChange = true;
+			monster.modelChange = true;
+			dispatchEventWith(BATTLE_RESULT, false, {'d': monster, 'a': battleuiModel.hero, 'result': result});
 		}
+
+		private function progressMonsterAttack(monster:MonsterModel):void
+		{
+			if (battleuiModel.hero.hp <= 0 || monster.battleEntity.hp <= 0)
+				return;
+			var result:BattleRound = BattleRoundCore.round(monster.battleEntity, battleuiModel.hero);
+			battleuiModel.modelChange = true;
+			monster.modelChange = true;
+			dispatchEventWith(BATTLE_RESULT, false, {'a': monster, 'd': battleuiModel.hero, 'result': result});
+		}
+
 	}
 }

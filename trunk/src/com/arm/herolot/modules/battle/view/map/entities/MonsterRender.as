@@ -1,7 +1,7 @@
 package com.arm.herolot.modules.battle.view.map.entities
 {
 	import com.arm.herolot.Consts;
-	import com.arm.herolot.modules.battle.model.entities.MonsterModel;
+	import com.arm.herolot.modules.battle.model.map.entities.MonsterModel;
 	import com.arm.herolot.modules.battle.view.map.MapGridView;
 
 	import starling.text.TextField;

@@ -1,12 +1,13 @@
 package com.arm.herolot.modules.battle.view.map
 {
 	import com.arm.herolot.Consts;
-	import com.arm.herolot.modules.battle.model.MapGridModel;
+	import com.arm.herolot.modules.battle.model.map.MapGridModel;
 	import com.snsapp.mobile.view.interactive.align.setting.VerticalAlign;
 	import com.snsapp.starling.texture.implement.BatchTexture;
 	
 	import flash.geom.Point;
 	
+	import starling.display.DisplayObject;
 	import starling.display.Sprite;
 
 
@@ -62,5 +63,18 @@ package com.arm.herolot.modules.battle.view.map
 				_grids[i].x = point.x, _grids[i].y = point.y;
 			}
 		}
+
+
+		public function getEntityViewByModel(model:MapGridModel):DisplayObject
+		{
+			var len:int = _grids.length;
+			for (var i:int = 0; i < len; i++)
+			{
+				if (_grids[i].model == model)
+					return _grids[i].entity;
+			}
+			return null;
+		}
+
 	}
 }

@@ -86,7 +86,6 @@ package com.snsapp.effect.cpu
 				bitmapData.perlinNoise(periodX, periodY, numOctaves, seed, false, true, 1, true, offsets);
 				bitmapData.applyFilter(bitmapData, bitmapData.rect, new Point(), cmf);
 				timePast = 0;
-//				stop();
 			}
 		}
 

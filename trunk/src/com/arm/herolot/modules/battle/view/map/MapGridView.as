@@ -3,8 +3,8 @@ package com.arm.herolot.modules.battle.view.map
 	import com.arm.herolot.HerolotApplication;
 	import com.arm.herolot.model.config.AppConfig;
 	import com.arm.herolot.modules.battle.map.MapGridData;
-	import com.arm.herolot.modules.battle.model.MapGridModel;
-	import com.arm.herolot.modules.battle.view.texture.BattleTexture;
+	import com.arm.herolot.modules.battle.model.map.MapGridModel;
+	import com.arm.herolot.modules.battle.texture.BattleTexture;
 	import com.greensock.TweenLite;
 	import com.qzone.utils.DisplayUtil;
 	import com.snsapp.starling.StarlingFactory;
@@ -41,7 +41,7 @@ package com.arm.herolot.modules.battle.view.map
 		protected var _enetityLayer:Sprite;
 		protected var _blockLayer:Sprite;
 		protected var _stateLayer:Sprite;
-		protected var _entity:Sprite;
+		public var entity:Sprite;
 
 		protected var _model:MapGridModel;
 		private var _debugText:TextField;
@@ -67,6 +67,12 @@ package com.arm.herolot.modules.battle.view.map
 						_model.addEventListener(eventList[i], modelEventHandler);
 				}
 			}
+		}
+
+
+		public function get model():MapGridModel
+		{
+			return _model;
 		}
 
 		public function MapGridView()
@@ -95,8 +101,8 @@ package com.arm.herolot.modules.battle.view.map
 
 			if (data.entity.id > 0)
 			{
-				_entity = new Sprite();
-				_enetityLayer.addChild(_entity);
+				entity = new Sprite();
+				_enetityLayer.addChild(entity);
 				createEntityView();
 			}
 
@@ -176,7 +182,6 @@ package com.arm.herolot.modules.battle.view.map
 				validate();
 		}
 
-
 		private function createEntityView():void
 		{
 			var id:int = _model.gridData.entity.id;
@@ -213,12 +218,12 @@ package com.arm.herolot.modules.battle.view.map
 				var mc:MovieClip = new MovieClip(atlas.getTextures('texture'), 6);
 				mc.scaleX = 4, mc.scaleY = 4;
 				Starling.juggler.add(mc);
-				_entity.addChild(mc);
+				entity.addChild(mc);
 			}
 			else
 			{
 				var img:Image = StarlingFactory.newImage(texture as SingleTexture);
-				_entity.addChild(img);
+				entity.addChild(img);
 			}
 		}
 

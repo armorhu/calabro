@@ -2,7 +2,7 @@ package com.arm.herolot.modules.battle
 {
 	import com.arm.herolot.modules.HerolotModule;
 	import com.arm.herolot.modules.battle.battle.hero.HeroModel;
-	import com.arm.herolot.modules.battle.model.entities.MonsterModel;
+	import com.arm.herolot.modules.battle.model.map.entities.MonsterModel;
 	import com.arm.herolot.modules.battle.view.map.entities.MonsterRender;
 
 	public class ModuleBattle extends HerolotModule implements IBattleApi

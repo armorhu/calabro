@@ -11,8 +11,8 @@ package com.arm.herolot.modules.battle.battle.round
 	public class BattleRound
 	{
 		/**
-		 *进攻方 
-		 */		
+		 *进攻方
+		 */
 		public var a:BattleEntity;
 		/**
 		 *进攻方的计算buffer效果后的实际的战斗模型
@@ -23,10 +23,10 @@ package com.arm.herolot.modules.battle.battle.round
 		 *进攻方本次战斗的结果。
 		 */
 		public var ar:AttackResult;
-		
+
 		/**
-		 *防守方 
-		 */		
+		 *防守方
+		 */
 		public var d:BattleEntity;
 		/**
 		 *防守方的计算buffer效果后的实际的战斗模型

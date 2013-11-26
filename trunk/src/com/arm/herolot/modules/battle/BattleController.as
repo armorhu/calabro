@@ -3,20 +3,15 @@ package com.arm.herolot.modules.battle
 	import com.arm.herolot.Consts;
 	import com.arm.herolot.Vars;
 	import com.arm.herolot.modules.battle.battle.hero.HeroModel;
-	import com.arm.herolot.modules.battle.map.MapMath;
-	import com.arm.herolot.modules.battle.model.MapGridModel;
-	import com.arm.herolot.modules.battle.view.map.MapGridView;
-	import com.arm.herolot.modules.battle.view.map.MapView;
-	import com.arm.herolot.modules.battle.view.texture.BattleTexture;
+	import com.arm.herolot.modules.battle.model.map.MapGridModel;
+	import com.arm.herolot.modules.battle.texture.BattleTexture;
 	import com.snsapp.mobile.utils.MobileSystemUtil;
 	import com.snsapp.starling.texture.ClientTextureParams;
-
+	
 	import flash.utils.setTimeout;
-
-	import starling.core.Starling;
+	
 	import starling.display.Sprite;
 	import starling.events.Event;
-	import starling.events.TouchEvent;
 
 	public class BattleController
 	{
@@ -68,9 +63,12 @@ package com.arm.herolot.modules.battle
 
 				_model = new BattleModel();
 				_model.addEventListener(BattleModel.CHANGE_FLOOR, modelEventHandler);
+				_model.addEventListener(BattleModel.BATTLE_RESULT, modelEventHandler);
+
 				_model.start(hero);
-				Starling.juggler.add(_model);
 				_model.nextFloor();
+
+				_view.setBattleuiModel(_model.battleuiModel);
 			}
 		}
 
@@ -82,13 +80,15 @@ package com.arm.herolot.modules.battle
 		{
 			if (evt.type == BattleModel.CHANGE_FLOOR)
 			{
-				_view.setMapdata(evt.data as Vector.<MapGridModel>);
+				_view.setMapdata(_model.mapDataModel.mapGrids);
 				//一定的延迟后，将门的那个格子打开。
-				var door:MapGridModel = _model.mapGrids[_model.mapData.door];
+				var door:MapGridModel = _model.mapDataModel.mapGrids[_model.mapDataModel.mapData.door];
 				setTimeout(door.touchHandler, 1000);
+				_view.setFloor(_model.floor);
 			}
-			else
+			else if (evt.type == BattleModel.BATTLE_RESULT)
 			{
+				_view.displayBattleResult(evt.data);
 			}
 		}
 	}

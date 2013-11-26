@@ -1,5 +1,6 @@
 package com.arm.herolot.modules.battle.battle.round.attack
 {
+
 	public class AttackResult
 	{
 		/**
