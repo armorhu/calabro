@@ -50,12 +50,12 @@ package com.arm.herolot.modules.battle.map
 
 		public static function getHpByFloor(floor:int):int
 		{
-			return floor;
+			return floor*10;
 		}
 
 		public static function getAckByFloor(floor:int):int
 		{
-			return floor;
+			return floor*10;
 		}
 	}
 }
