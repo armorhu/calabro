@@ -38,25 +38,27 @@ package com.qzone.utils
 		}
 
 		/**
-		 * 销毁一切
-		 *
 		 * @param mc
 		 * @arthor Demon.S
 		 */
-		public static function stopAll(mc:DisplayObjectContainer):void
+		public static function stopAll(mc:Object):void
 		{
 			if (mc == null)
 				return;
-			var len:int = mc.numChildren
-			if (mc is MovieClip)
+			if (mc.hasOwnProperty('stop'))
 				mc["stop"]();
+			if (mc.hasOwnProperty('numChildren'))
+				var len:int=mc.numChildren;
+			if (len == 0)
+				return;
 			while (len--)
 			{
-				var child:* = mc.getChildAt(len);
-				if (child is DisplayObjectContainer)
-					stopAll(child);
+				var child:*=mc.getChildAt(len);
+				stopAll(child);
 			}
 		}
+
+
 
 		/**
 		 * 销毁一切
@@ -70,7 +72,7 @@ package com.qzone.utils
 				return;
 			while (mc.numChildren)
 			{
-				var child:* = mc.getChildAt(0);
+				var child:*=mc.getChildAt(0);
 				mc.removeChild(child);
 				if (child is Bitmap)
 					Bitmap(child).bitmapData.dispose();
@@ -115,7 +117,7 @@ package com.qzone.utils
 		public static function removeChildAt(container:DisplayObjectContainer, index:int):DisplayObject
 		{
 
-			var child:DisplayObject = container.getChildAt(index);
+			var child:DisplayObject=container.getChildAt(index);
 
 			return DisplayUtil.removeChild(container, child);
 		}
@@ -130,7 +132,7 @@ package com.qzone.utils
 		public static function removeChildByName(container:DisplayObjectContainer, name:String):DisplayObject
 		{
 
-			var child:DisplayObject = container.getChildByName(name);
+			var child:DisplayObject=container.getChildByName(name);
 
 			return DisplayUtil.removeChild(container, child);
 		}
@@ -144,11 +146,11 @@ package com.qzone.utils
 		{
 			if (arg is InteractiveObject)
 			{
-				arg.mouseEnabled = false;
+				arg.mouseEnabled=false;
 			}
 			if (arg is DisplayObjectContainer)
 			{
-				arg["mouseChildren"] = false;
+				arg["mouseChildren"]=false;
 			}
 		}
 
@@ -178,7 +180,7 @@ package com.qzone.utils
 				{
 
 					if (source.hasOwnProperty(i))
-						target[i] = source[i];
+						target[i]=source[i];
 
 				}
 			}
@@ -195,24 +197,24 @@ package com.qzone.utils
 			if (target == null)
 				return;
 
-			target.mouseEnabled = enabled;
+			target.mouseEnabled=enabled;
 
 			if (target.hasOwnProperty("mouseChildren"))
 			{
-				target["mouseChildren"] = enabled;
+				target["mouseChildren"]=enabled;
 			}
 			if (target.hasOwnProperty("buttonMode"))
 			{
-				target["buttonMode"] = enabled;
+				target["buttonMode"]=enabled;
 			}
 			if (target.hasOwnProperty("enabled"))
 			{
-				target["enabled"] = enabled;
+				target["enabled"]=enabled;
 			}
 
 			if (enabled)
 			{
-				target.filters = [];
+				target.filters=[];
 			}
 			else
 			{
@@ -224,9 +226,9 @@ package com.qzone.utils
 						0,     0,     0,         1,     0
 					];*/
 				//0.299*R + 0.587*G + 0.114*B
-				var matrix:Array = [0.299, 0.587, 0.114, 0, 0, 0.299, 0.587, 0.114, 0, 0, 0.299, 0.587, 0.114, 0, 0, 0, 0, 0, 1, 0];
-				var colorFileter:ColorMatrixFilter = new ColorMatrixFilter(matrix);
-				target.filters = [colorFileter];
+				var matrix:Array=[0.299, 0.587, 0.114, 0, 0, 0.299, 0.587, 0.114, 0, 0, 0.299, 0.587, 0.114, 0, 0, 0, 0, 0, 1, 0];
+				var colorFileter:ColorMatrixFilter=new ColorMatrixFilter(matrix);
+				target.filters=[colorFileter];
 			}
 		}
 
@@ -235,13 +237,13 @@ package com.qzone.utils
 		 * */
 		public static function centerObjAt(obj:DisplayObject, targetCoordinateSpace:DisplayObject, pos:Point):void
 		{
-			var rect:Rectangle = obj.getRect(targetCoordinateSpace);
+			var rect:Rectangle=obj.getRect(targetCoordinateSpace);
 
-			var currentCenterX:Number = rect.x + rect.width / 2;
-			var currentCenterY:Number = rect.y + rect.height / 2;
+			var currentCenterX:Number=rect.x + rect.width / 2;
+			var currentCenterY:Number=rect.y + rect.height / 2;
 
-			obj.x += pos.x - currentCenterX;
-			obj.y += pos.y - currentCenterY;
+			obj.x+=pos.x - currentCenterX;
+			obj.y+=pos.y - currentCenterY;
 		}
 
 		/**
@@ -249,16 +251,16 @@ package com.qzone.utils
 		 * 将窗口的宽度缩放至与屏幕宽相同
 		 * 然后将高度不够的地方用某种给定的颜色填充
 		 */
-		public static function autoScaleWindow(window:Sprite, stageWidth:Number, stageHeight:Number, fillColor:uint = 0x666666):void
+		public static function autoScaleWindow(window:Sprite, stageWidth:Number, stageHeight:Number, fillColor:uint=0x666666):void
 		{
 			smoothingBitmap(window);
 			//var scale:Number = Math.min(stageWidth / window.width, stageHeight / window.height);
-			var scale:Number = stageWidth / window.width;
-			window.scaleY = window.scaleX = scale;
-			var unFill:Number = stageHeight - window.height;
-			var fillBitmap:Bitmap = new Bitmap(new BitmapData(1, 1, false, fillColor));
-			fillBitmap.width = stageWidth / scale;
-			fillBitmap.height = stageHeight / scale;
+			var scale:Number=stageWidth / window.width;
+			window.scaleY=window.scaleX=scale;
+			var unFill:Number=stageHeight - window.height;
+			var fillBitmap:Bitmap=new Bitmap(new BitmapData(1, 1, false, fillColor));
+			fillBitmap.width=stageWidth / scale;
+			fillBitmap.height=stageHeight / scale;
 			window.addChildAt(fillBitmap, 0);
 		}
 
@@ -268,23 +270,23 @@ package com.qzone.utils
 		 * @param target
 		 * @param parentScaleX
 		 */
-		public static function replaceAsBitmap(target:DisplayObjectContainer, parentScaleX:Number = 1, parentScaleY:Number = 1):void
+		public static function replaceAsBitmap(target:DisplayObjectContainer, parentScaleX:Number=1, parentScaleY:Number=1):void
 		{
-			const len:int = target.numChildren;
+			const len:int=target.numChildren;
 			var child:DisplayObject;
 			var bitmap:Bitmap;
 			var vWidth:Number;
 			var vHeight:Number;
-			for (var i:int = 0; i < len; i++)
+			for (var i:int=0; i < len; i++)
 			{
-				child = target.getChildAt(i);
+				child=target.getChildAt(i);
 				if (child.name.indexOf("cache") == 0)
 				{ //是以cache开头的
 					//draw 
-					vWidth = child.width * parentScaleX; //真实在舞台上看见的宽度
-					vHeight = child.height * parentScaleY; //真实在舞台上看见的高度
-					bitmap = new Bitmap(new BitmapData(vWidth, vHeight, true, 0), "auto", true);
-					var matrix:Matrix = new Matrix();
+					vWidth=child.width * parentScaleX; //真实在舞台上看见的宽度
+					vHeight=child.height * parentScaleY; //真实在舞台上看见的高度
+					bitmap=new Bitmap(new BitmapData(vWidth, vHeight, true, 0), "auto", true);
+					var matrix:Matrix=new Matrix();
 					matrix.scale(parentScaleX, parentScaleY);
 					//for air sdk 3.3
 					try
@@ -294,18 +296,18 @@ package com.qzone.utils
 					catch (err:Error)
 					{
 						if (stage)
-							stage.quality = StageQuality.HIGH;
+							stage.quality=StageQuality.HIGH;
 						bitmap.bitmapData.draw(child, matrix);
 						if (stage)
-							stage.quality = StageQuality.LOW;
+							stage.quality=StageQuality.LOW;
 					}
 //					bitmap.bitmapData.draw(child,matrix);
 					//clone
-					bitmap.name = child.name;
-					bitmap.x = child.x;
-					bitmap.y = child.y;
-					bitmap.width = child.width;
-					bitmap.height = child.height;
+					bitmap.name=child.name;
+					bitmap.x=child.x;
+					bitmap.y=child.y;
+					bitmap.width=child.width;
+					bitmap.height=child.height;
 
 					target.addChildAt(bitmap, target.getChildIndex(child));
 					target.removeChild(child);
@@ -329,21 +331,21 @@ package com.qzone.utils
 		 * @return
 		 *
 		 */
-		static public function cacheSimpleButton(btn:SimpleButton, scale:Number = 1.0, transparent:Boolean = true):BitmapData
+		static public function cacheSimpleButton(btn:SimpleButton, scale:Number=1.0, transparent:Boolean=true):BitmapData
 		{
-			btn.downState = btn.upState;
-			btn.overState = btn.upState;
-			btn.hitTestState = btn.upState;
+			btn.downState=btn.upState;
+			btn.overState=btn.upState;
+			btn.hitTestState=btn.upState;
 
-			var scaleSelfBounds:Rectangle = btn.upState.getBounds(null).clone();
-			scaleSelfBounds.x *= scale;
-			scaleSelfBounds.y *= scale;
-			scaleSelfBounds.width *= scale;
-			scaleSelfBounds.height *= scale;
-			var parentBounds:Rectangle = btn.upState.getBounds(btn);
+			var scaleSelfBounds:Rectangle=btn.upState.getBounds(null).clone();
+			scaleSelfBounds.x*=scale;
+			scaleSelfBounds.y*=scale;
+			scaleSelfBounds.width*=scale;
+			scaleSelfBounds.height*=scale;
+			var parentBounds:Rectangle=btn.upState.getBounds(btn);
 
-			var bpd:BitmapData = new BitmapData(scaleSelfBounds.width, scaleSelfBounds.height, transparent, 0xff0000);
-			var mtx:Matrix = new Matrix();
+			var bpd:BitmapData=new BitmapData(scaleSelfBounds.width, scaleSelfBounds.height, transparent, 0xff0000);
+			var mtx:Matrix=new Matrix();
 			//注意先scale再translate
 			mtx.scale(scale, scale);
 			mtx.translate(-scaleSelfBounds.x, -scaleSelfBounds.y);
@@ -354,27 +356,27 @@ package com.qzone.utils
 			}
 			catch (err:Error)
 			{
-				stage.quality = StageQuality.HIGH;
+				stage.quality=StageQuality.HIGH;
 				bpd.draw(btn.upState, mtx);
-				stage.quality = StageQuality.LOW;
+				stage.quality=StageQuality.LOW;
 			}
 
 
-			var bmp:Bitmap = new Bitmap(bpd);
-			bmp.width = parentBounds.width;
-			bmp.height = parentBounds.height;
-			bmp.x = parentBounds.x;
-			bmp.y = parentBounds.y;
+			var bmp:Bitmap=new Bitmap(bpd);
+			bmp.width=parentBounds.width;
+			bmp.height=parentBounds.height;
+			bmp.x=parentBounds.x;
+			bmp.y=parentBounds.y;
 
-			btn.upState = btn.overState = btn.hitTestState = bmp;
+			btn.upState=btn.overState=btn.hitTestState=bmp;
 
 			//downState一律往右下10 * scale pixs
-			bmp = new Bitmap(bpd);
-			bmp.width = parentBounds.width;
-			bmp.height = parentBounds.height;
-			bmp.x = parentBounds.x + 10;
-			bmp.y = parentBounds.y + 10;
-			btn.downState = bmp;
+			bmp=new Bitmap(bpd);
+			bmp.width=parentBounds.width;
+			bmp.height=parentBounds.height;
+			bmp.x=parentBounds.x + 10;
+			bmp.y=parentBounds.y + 10;
+			btn.downState=bmp;
 
 			return bpd;
 		}
@@ -388,13 +390,13 @@ package com.qzone.utils
 		 * @return
 		 *
 		 */
-		public static function cacheSprite(target:Sprite, scale:Number = 1.0, replace:Boolean = true, transparent:Boolean = true):Bitmap
+		public static function cacheSprite(target:Sprite, scale:Number=1.0, replace:Boolean=true, transparent:Boolean=true):Bitmap
 		{
-			var oriBounds:Rectangle = target.getBounds(target);
-			var bounds:Rectangle = oriBounds.clone();
+			var oriBounds:Rectangle=target.getBounds(target);
+			var bounds:Rectangle=oriBounds.clone();
 
-			var bpd:BitmapData = new BitmapData(bounds.width, bounds.height, transparent, 0xff0000);
-			var mtx:Matrix = new Matrix();
+			var bpd:BitmapData=new BitmapData(bounds.width, bounds.height, transparent, 0xff0000);
+			var mtx:Matrix=new Matrix();
 			//注意先translate再scale
 			mtx.translate(-bounds.x, -bounds.y);
 			mtx.scale(scale, scale);
@@ -405,16 +407,16 @@ package com.qzone.utils
 			}
 			catch (err:Error)
 			{
-				stage.quality = StageQuality.HIGH;
+				stage.quality=StageQuality.HIGH;
 				bpd.draw(target, mtx);
-				stage.quality = StageQuality.LOW;
+				stage.quality=StageQuality.LOW;
 			}
 
-			var bmp:Bitmap = new Bitmap(bpd);
-			bmp.x = oriBounds.x;
-			bmp.y = oriBounds.y;
-			bmp.width = oriBounds.width;
-			bmp.height = oriBounds.height;
+			var bmp:Bitmap=new Bitmap(bpd);
+			bmp.x=oriBounds.x;
+			bmp.y=oriBounds.y;
+			bmp.width=oriBounds.width;
+			bmp.height=oriBounds.height;
 
 			if (replace)
 			{
@@ -431,11 +433,11 @@ package com.qzone.utils
 		 * @param target
 		 * @framesForCache Identifies which frames would being cached.
 		 */
-		static public function cacheMCFrames(target:MovieClip, scale:Number, framesForCache:Vector.<int> = null):void
+		static public function cacheMCFrames(target:MovieClip, scale:Number, framesForCache:Vector.<int>=null):void
 		{
-			var n:int = target.totalFrames;
+			var n:int=target.totalFrames;
 			var bmp:Bitmap;
-			for (var i:int = 1; i <= n; i++)
+			for (var i:int=1; i <= n; i++)
 			{
 				if (framesForCache != null && framesForCache.indexOf(i) < 0)
 					continue;
@@ -446,47 +448,50 @@ package com.qzone.utils
 
 
 
-		public static function cacheAsBitmap(source:DisplayObject, scaleX:Number, scaleY:Number, transparnt:Boolean = true, gap:int = 0):BitmapFrame
+		public static function cacheAsBitmap(source:DisplayObject, scaleX:Number, scaleY:Number, transparnt:Boolean=true, gap:int=0):BitmapFrame
 		{
-			source.scaleX *= scaleX;
-			source.scaleY *= scaleY;
-			var rect:Rectangle = source.getBounds(source);
-			var mtx:Matrix = source.transform.matrix.clone();
-			mtx.tx = -rect.x * source.scaleX + gap;
-			mtx.ty = -rect.y * source.scaleY + gap;
-			var w:int = source.width + gap * 2;
-			var h:int = source.height + gap * 2;
+			source.scaleX*=scaleX;
+			source.scaleY*=scaleY;
+			var rect:Rectangle=source.getBounds(source);
+			var mtx:Matrix=source.transform.matrix.clone();
+			mtx.tx=-rect.x * source.scaleX + gap;
+			mtx.ty=-rect.y * source.scaleY + gap;
+			var w:int=source.width + gap * 2;
+			var h:int=source.height + gap * 2;
 			if (w == 0)
-				w = 1;
+				w=1;
 			if (h == 0)
-				h = 1;
-			var bitmapdata:BitmapData = new BitmapData(w, h, transparnt, 0);
-			bitmapdata.drawWithQuality(source, mtx, null, null, null, true, StageQuality.HIGH);
+				h=1;
+			var bitmapdata:BitmapData=new BitmapData(w, h, transparnt, 0);
+			if (bitmapdata.hasOwnProperty('drawWithQuality'))
+				bitmapdata['drawWithQuality'](source, mtx, null, null, null, true, StageQuality.HIGH);
+			else
+				bitmapdata.draw(source, mtx, null, null, null, true);
 //			for (var i:int = -3; i < 3; i++)
 //				for (var k:int = -3; k < 3; k++)
 //					bitmapdata.setPixel(mtx.tx + i, mtx.ty + k, 0xFF0000);
-			source.scaleX /= scaleX;
-			source.scaleY /= scaleY;
-			var frame:BitmapFrame = new BitmapFrame();
-			frame.bmd = bitmapdata;
-			frame.x = mtx.tx;
-			frame.y = mtx.ty;
-			frame.scaleX = 1/scaleX;
-			frame.scaleY = 1/scaleY;
+			source.scaleX/=scaleX;
+			source.scaleY/=scaleY;
+			var frame:BitmapFrame=new BitmapFrame();
+			frame.bmd=bitmapdata;
+			frame.x=mtx.tx;
+			frame.y=mtx.ty;
+			frame.scaleX=1 / scaleX;
+			frame.scaleY=1 / scaleY;
 			return frame;
 		}
 
 
 		public static function smoothingBitmap(target:DisplayObjectContainer):void
 		{
-			const len:int = target.numChildren;
+			const len:int=target.numChildren;
 			var child:DisplayObject;
-			for (var i:int = 0; i < len; i++)
+			for (var i:int=0; i < len; i++)
 			{
 				if (child is DisplayObjectContainer)
 					smoothingBitmap(child as DisplayObjectContainer);
 				else if (child is Bitmap)
-					Bitmap(child).smoothing = true;
+					Bitmap(child).smoothing=true;
 			}
 		}
 
@@ -496,31 +501,31 @@ package com.qzone.utils
 		 */
 		public static function replaceFilterTextFiledAsBitmap(container:DisplayObjectContainer):void
 		{
-			const len:int = container.numChildren;
+			const len:int=container.numChildren;
 			var child:DisplayObject;
 			var tf:TextField;
-			for (var i:int = 0; i < len; i++)
+			for (var i:int=0; i < len; i++)
 			{
-				child = container.getChildAt(i);
+				child=container.getChildAt(i);
 				if (child is DisplayObjectContainer)
 					replaceFilterTextFiledAsBitmap(child as DisplayObjectContainer);
 				else if (child is TextField)
 				{
-					tf = child as TextField;
+					tf=child as TextField;
 					if (tf.filters != null && tf.filters.length > 0)
 					{
 						/**滤镜一般会超出文本的大小,所以多draw一点**/
-						var matrix:Matrix = new Matrix();
+						var matrix:Matrix=new Matrix();
 						matrix.translate(5, 5);
-						var cache:Bitmap = new Bitmap(new BitmapData(tf.textWidth + 10, tf.textHeight + 10, true, 0), "auto", true);
-						cache.x = tf.x - 3;
-						cache.y = tf.y - 3;
+						var cache:Bitmap=new Bitmap(new BitmapData(tf.textWidth + 10, tf.textHeight + 10, true, 0), "auto", true);
+						cache.x=tf.x - 3;
+						cache.y=tf.y - 3;
 						//cache.bitmapData.drawWithQuality(tf, matrix, null, null, null, true, StageQuality.BEST);
 						if (stage)
-							stage.quality = StageQuality.HIGH;
+							stage.quality=StageQuality.HIGH;
 						cache.bitmapData.draw(child, matrix);
 						if (stage)
-							stage.quality = StageQuality.LOW;
+							stage.quality=StageQuality.LOW;
 						container.addChildAt(cache, container.getChildIndex(tf));
 						container.removeChild(tf);
 					}
@@ -530,16 +535,16 @@ package com.qzone.utils
 
 		public static function getRealitySizeOf(tf:TextField):Point
 		{
-			var w:Number = tf.textWidth, h:Number = tf.textHeight;
+			var w:Number=tf.textWidth, h:Number=tf.textHeight;
 			if (tf.filters != null && tf.filters.length > 0)
 			{
-				const len:int = tf.filters.length;
-				for (var i:int = 0; i < len; i++)
+				const len:int=tf.filters.length;
+				for (var i:int=0; i < len; i++)
 				{
 					if (tf.filters[i] is GlowFilter)
 					{
-						w += GlowFilter(tf.filters[i]).blurX;
-						h += GlowFilter(tf.filters[i]).blurY;
+						w+=GlowFilter(tf.filters[i]).blurX;
+						h+=GlowFilter(tf.filters[i]).blurY;
 					}
 				}
 			}
@@ -553,16 +558,16 @@ package com.qzone.utils
 		 */
 		public static function getRegPointOf(displayObj:DisplayObject):Point
 		{
-			var rect:Rectangle = displayObj.getRect(displayObj);
+			var rect:Rectangle=displayObj.getRect(displayObj);
 			return new Point(-rect.x, -rect.y);
 		}
 
 
 		public static function delBoldTag(htmlTxt:String):String
 		{
-			var str:String = htmlTxt;
-			str = str.replace(/<b>/g, "");
-			str = str.replace(/<\/b>/g, "");
+			var str:String=htmlTxt;
+			str=str.replace(/<b>/g, "");
+			str=str.replace(/<\/b>/g, "");
 			return str;
 		}
 
@@ -573,26 +578,26 @@ package com.qzone.utils
 		 * @param	offset	该参数为递归辅助参数，使用时请保持默认
 		 * @return
 		 */
-		public static function caculateTotalFrames(clip:MovieClip, recursion:int = -1, offset:int = 0):int
+		public static function caculateTotalFrames(clip:MovieClip, recursion:int=-1, offset:int=0):int
 		{
 			var child:DisplayObject;
-			var length:int = clip.totalFrames;
+			var length:int=clip.totalFrames;
 			if (recursion == 0)
 				return length + offset;
-			var position:int, totalFrames:int = 0;
-			var currentFrame:int = clip.currentFrame;
-			for (var i:int = 1; i <= length; i++)
+			var position:int, totalFrames:int=0;
+			var currentFrame:int=clip.currentFrame;
+			for (var i:int=1; i <= length; i++)
 			{
 				clip.gotoAndStop(i);
-				var depth:int = clip.numChildren;
-				for (var j:int = 0; j < depth; j++) //遍历当前帧的所有原件
+				var depth:int=clip.numChildren;
+				for (var j:int=0; j < depth; j++) //遍历当前帧的所有原件
 				{
-					position = offset + i; //position表示这个原件是在第几帧出现的
-					child = clip.getChildAt(j);
+					position=offset + i; //position表示这个原件是在第几帧出现的
+					child=clip.getChildAt(j);
 					if (child is MovieClip)
-						position = caculateTotalFrames(child as MovieClip, recursion - 1, position - 1); //这个元件的totalframe
+						position=caculateTotalFrames(child as MovieClip, recursion - 1, position - 1); //这个元件的totalframe
 					if (totalFrames < position)
-						totalFrames = position;
+						totalFrames=position;
 				}
 			}
 			clip.gotoAndPlay(currentFrame);
@@ -603,14 +608,96 @@ package com.qzone.utils
 		{
 			if (mc is MovieClip)
 				MovieClip(mc).gotoAndStop(1);
-			const len:int = mc.numChildren;
+			const len:int=mc.numChildren;
 			var child:DisplayObject;
-			for (var i:int = 0; i < len; i++)
+			for (var i:int=0; i < len; i++)
 			{
-				child = mc.getChildAt(i);
+				child=mc.getChildAt(i);
 				if (child is DisplayObjectContainer)
 					gotoAndStop0(child as DisplayObjectContainer);
 			}
+		}
+
+
+
+		public static function getChildByNameList(parent:Object, targetNameList:Array, onlyVisible:Boolean=false):Object
+		{
+			const len:int=targetNameList.length;
+			if (parent == null)
+				return null;
+			if (!parent.hasOwnProperty('numChildren'))
+				return null;
+			var child:Object;
+			for (var i:int=0; i < len; i++)
+			{
+				if (parent == null)
+					return null;
+				child=DisplayUtil.getChildByName(parent, targetNameList[i], onlyVisible);
+				if (child == null)
+					return null;
+
+				if (child.hasOwnProperty('numChildren'))
+					parent=child;
+				else
+					parent=null;
+			}
+			return parent;
+		}
+
+
+
+
+		public static function getChildByName(parent:Object, childName:String, onlyVisible:Boolean=false):Object
+		{
+			if (childName == null || childName == "" || parent == null)
+				return null;
+			if (!parent.hasOwnProperty('getChildByName'))
+				return null;
+			var child:Object=parent.getChildByName(childName);
+			if (onlyVisible)
+			{
+				//仅要可以被看见的
+				if (child && child.visible)
+				{
+					return child;
+				}
+				else
+				{
+					const len:int=parent.numChildren;
+					for (var i:int=0; i < len; i++)
+					{
+						var childContainer:Object=parent.getChildAt(i);
+						if (childContainer && childContainer.visible && childContainer.hasOwnProperty('getChildByName'))
+						{
+							child=getChildByName(childContainer, childName, onlyVisible);
+							if (child && child.visible)
+								return child;
+						}
+					}
+				}
+			}
+			else
+			{
+				if (child)
+				{
+					return child;
+				}
+				else
+				{
+					const len2:int=parent.numChildren;
+					for (i=0; i < len2; i++)
+					{
+						childContainer=parent.getChildAt(i);
+						if (childContainer && childContainer.hasOwnProperty('getChildByName'))
+						{
+							child=getChildByName(childContainer, childName, onlyVisible);
+							if (child)
+								return child;
+						}
+					}
+				}
+			}
+			return null;
 		}
 	}
 }

@@ -8,7 +8,6 @@ package com.snsapp.mobile.utils
 	import com.snsapp.mobile.view.bmpLib.Scale9GridSprite;
 	
 	import flash.display.Sprite;
-	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import flash.events.MouseEvent;
 	import flash.geom.Rectangle;
@@ -24,16 +23,11 @@ package com.snsapp.mobile.utils
 	{
 		private var _app:IApplication;
 		private var _screenScale:Number;
-		private var _msgTF:EmbedTextField;
-		private var _okBtn:BitmapSprite;
-		private var _cancelBtn:BitmapSprite;
-		private var _closeBtn:BitmapSprite;
-
 		private var _tipUI:Class;
 		private var _dialogUI:Class;
 		private var _fontName:String;
-		private var _stageWidth:Number;
-		private var _stageHeight:Number;
+//		private var _stageWidth:Number;
+//		private var _stageHeight:Number;
 
 
 
@@ -44,42 +38,42 @@ package com.snsapp.mobile.utils
 			tipUI:Class, //ui
 			dialogUI:Class)
 		{
-			_app = app;
-			_fontName = fontName;
-			_stageWidth = stageWidth;
-			_stageHeight = stageHeight;
-			_tipUI = tipUI;
-			_dialogUI = dialogUI;
+			_app=app;
+			_fontName=fontName;
+//			_stageWidth=stageWidth;
+//			_stageHeight=stageHeight;
+			_tipUI=tipUI;
+			_dialogUI=dialogUI;
 		}
 
 		private var _tipMC:Scale9GridSprite;
 
-		public function showAlert(msg:String, delay:int = 1000, textWidth:uint = 0):void
+		public function showAlert(msg:String, delay:int=1000, textWidth:uint=0):void
 		{
 			if (msg == null || msg == "")
 				return;
-			_screenScale = ScreenAdaptiveUtil.SCALE_COMPARED_TO_IP4.maxScale;
+			_screenScale=ScreenAdaptiveUtil.SCALE_COMPARED_TO_IP4.maxScale;
 			if (_tipMC == null)
 			{
-				var layer:Sprite = _app.appStage.getChildByName("tipLayer") as Sprite;
-				layer.mouseChildren = layer.mouseEnabled = false;
+				var layer:Sprite=_app.appStage.getChildByName("tipLayer") as Sprite;
+				layer.mouseChildren=layer.mouseEnabled=false;
 
-				var tipView:Sprite = new _tipUI;
-				_tipMC = new Scale9GridSprite(tipView, 24, 24);
-				var msgTF:EmbedTextField = new EmbedTextField(_fontName, _screenScale, 24, 0x591806, "CC");
-				msgTF.multiline = true;
-				msgTF.htmlText = msg;
+				var tipView:Sprite=new _tipUI;
+				_tipMC=new Scale9GridSprite(tipView, 24, 24);
+				var msgTF:EmbedTextField=new EmbedTextField(_fontName, _screenScale, 24, 0x591806, "CC");
+				msgTF.multiline=true;
+				msgTF.htmlText=msg;
 
-				_tipMC.width = msgTF.width + 180 * _screenScale;
-				_tipMC.height = msgTF.height + 80 * _screenScale;
+				_tipMC.width=msgTF.width + 180 * _screenScale;
+				_tipMC.height=msgTF.height + 80 * _screenScale;
 				_tipMC.createSprite();
 
-				msgTF.x = (_tipMC.width - msgTF.width) * .5;
-				msgTF.y = (_tipMC.height - msgTF.height) * .5;
+				msgTF.x=(_tipMC.width - msgTF.width) * .5;
+				msgTF.y=(_tipMC.height - msgTF.height) * .5;
 				_tipMC.addChild(msgTF);
 
-				_tipMC.x = (StageInstance.stage.stageWidth - _tipMC.width) * .5;
-				_tipMC.y = (StageInstance.stage.stageHeight - _tipMC.height) * .5;
+				_tipMC.x=(StageInstance.stage.stageWidth - _tipMC.width) * .5;
+				_tipMC.y=(StageInstance.stage.stageHeight - _tipMC.height) * .5;
 
 
 				layer.addChild(_tipMC);
@@ -91,132 +85,155 @@ package com.snsapp.mobile.utils
 		{
 			if (_tipMC != null)
 			{
-				var layer:Sprite = _app.appStage.getChildByName("tipLayer") as Sprite;
+				var layer:Sprite=_app.appStage.getChildByName("tipLayer") as Sprite;
 				layer.removeChild(_tipMC);
-				_tipMC = null;
+				_tipMC=null;
 			}
 		}
 
-		private var _dialogMC:Sprite;
+		private var _dialogs:Vector.<DialogItem>=new Vector.<DialogItem>();
 
-		public function showDialog(msg:String, okCall:Function, okParam:Object = null, single:Boolean = false, cancelCall:Function = null, cancelParam:Object = null):void
+		public function showDialog(msg:String, okCall:Function, okParam:Object=null, single:Boolean=false, cancelCall:Function=null, cancelParam:Object=null):void
 		{
 			if (msg == null || msg == "")
 				return;
-			_screenScale = ScreenAdaptiveUtil.SCALE_COMPARED_TO_IP4.maxScale;
+			
+			var stageWidth:Number = _app.appStage.stage.stageWidth;
+			var stageHeight:Number = _app.appStage.stage.stageHeight;
+			
+			var _msgTF:EmbedTextField;
+			var _okBtn:BitmapSprite;
+			var _cancelBtn:BitmapSprite;
+			_screenScale=ScreenAdaptiveUtil.SCALE_COMPARED_TO_IP4.maxScale;
 			var hasCancelCall:Boolean;
-			if (_dialogMC == null)
+			var _dialogMC:Sprite;
+			var dialogView:Sprite=new _dialogUI;
+			_dialogMC=new Scale9GridSprite(dialogView.getChildByName('bgMC'), 24, 24);
+			var msgTF:EmbedTextField=new EmbedTextField(_fontName, _screenScale, 24, 0x813401, "CC");
+			msgTF.htmlText=msg;
+
+			//当信息文本框过小（当embed字体不存在时）时，取消embed。
+//			if (msgTF.width <= 5.0 || msgTF.height <= 5.0)
+//				msgTF.embedFonts = false;
+
+			_dialogMC.width=msgTF.width + 150 * _screenScale;
+			_dialogMC.height=msgTF.height + 180 * _screenScale;
+			Scale9GridSprite(_dialogMC).createSprite();
+
+			msgTF.x=(_dialogMC.width - msgTF.width) * .5;
+			msgTF.y=(_dialogMC.height - msgTF.height) * .3;
+
+			_dialogMC.addChild(msgTF);
+
+			_okBtn=new BitmapSprite(dialogView.getChildByName('okBtn'), _screenScale);
+			_okBtn.name='btnOK';
+			_okBtn.y=_dialogMC.height * .65;
+
+			_cancelBtn=new BitmapSprite(dialogView.getChildByName('cancelBtn'), _screenScale);
+			_cancelBtn.name='btnCancel';
+
+			_dialogMC.x=(stageWidth - _dialogMC.width) >> 1;
+			_dialogMC.y=(stageHeight - _dialogMC.height) >> 1;
+
+			if (single)
 			{
+				_okBtn.x=_dialogMC.width * .5 - _okBtn.width * .5;
+			}
+			else
+			{
+				_okBtn.x=_dialogMC.width * .5 - _okBtn.width * 1.5;
 
-				var layer:Sprite = _app.appStage.getChildByName("dialogLayer") as Sprite;
-				layer.mouseChildren = layer.mouseEnabled = true;
+				_cancelBtn.x=_dialogMC.width * .5 + _cancelBtn.width * .5;
+				_cancelBtn.y=_dialogMC.height * .65;
+				_dialogMC.addChild(_cancelBtn);
+				if (cancelCall != null)
+					hasCancelCall=true;
+			}
+			_dialogMC.addChild(_okBtn);
+			addDialog(_dialogMC, okCall, cancelCall);
+		}
 
-				var maskMC:Sprite = GraphicsUtil.createMaskSprite(0, 0, _stageWidth, _stageHeight); //在手机端stage.stageWidth是不准的。//StageInstance.stage.stageWidth, StageInstance.stage.stageHeight);
-				maskMC.name = "maskMC";
-				layer.addChild(maskMC);
-
-				var dialogView:Sprite = new _dialogUI;
-				_dialogMC = new Scale9GridSprite(dialogView.getChildByName('bgMC'), 24, 24);
-
-				var msgTF:EmbedTextField = new EmbedTextField(_fontName, _screenScale, 24, 0x813401, "CC");
-				msgTF.htmlText = msg;
-
-				_dialogMC.width = msgTF.width + 150 * _screenScale;
-				_dialogMC.height = msgTF.height + 180 * _screenScale;
-				Scale9GridSprite(_dialogMC).createSprite();
-
-				msgTF.x = (_dialogMC.width - msgTF.width) * .5;
-				msgTF.y = (_dialogMC.height - msgTF.height) * .3;
-
-				_dialogMC.addChild(msgTF);
-
-				_okBtn = new BitmapSprite(dialogView.getChildByName('okBtn'), _screenScale);
-				_okBtn.y = _dialogMC.height * .65;
-
-				_cancelBtn = new BitmapSprite(dialogView.getChildByName('cancelBtn'), _screenScale);
-
-				_dialogMC.x = (_stageWidth - _dialogMC.width) * .5;
-				_dialogMC.y = (StageInstance.stage.stageHeight - _dialogMC.height) * .5;
-
-				layer.addChild(_dialogMC);
-
-				_okBtn.addEventListener(MouseEvent.CLICK, okFunction);
-
-				if (single)
+		private function clickDialog(evt:MouseEvent):void
+		{
+			//只有最上面的面板能触发事件。 
+			var targetName:String=evt.target['name'];
+			var item:DialogItem=_dialogs[_dialogs.length - 1];
+			if (item.clickHandler != null)
+				item.clickHandler(targetName);
+			if (targetName == 'btnOK' || targetName == 'btnCancel' || targetName == 'btnClose')
+			{
+				if (targetName == 'btnOK')
 				{
-					_okBtn.x = _dialogMC.width * .5 - _okBtn.width * .5;
+					if (item.okCall != null)
+						item.okCall();
 				}
 				else
 				{
-					_okBtn.x = _dialogMC.width * .5 - _okBtn.width * 1.5;
-
-					_cancelBtn.x = _dialogMC.width * .5 + _cancelBtn.width * .5;
-					_cancelBtn.y = _dialogMC.height * .65;
-					_cancelBtn.addEventListener(MouseEvent.CLICK, cancelFunction);
-					_dialogMC.addChild(_cancelBtn);
-
-					if (cancelCall != null)
-						hasCancelCall = true;
+					if (item.cancelCall != null)
+						item.cancelCall();
 				}
-
-				_dialogMC.addChild(_okBtn);
-
-			}
-			function okFunction(e:MouseEvent):void
-			{
-				dispatchEvent(new MouseEvent(MouseEvent.CLICK));
-//				_app.playSound(Consts.SOUND_CLICK);
-				e.stopPropagation();
-				_okBtn.removeEventListener(MouseEvent.CLICK, okFunction);
-				removeDialog();
-				if (okParam != null)
-					okCall(okParam);
-				else
-				{
-					if (okCall != null)
-						okCall();
-					else
-						removeDialog();
-				}
-			}
-			function cancelFunction(e:MouseEvent):void
-			{
-				dispatchEvent(new MouseEvent(MouseEvent.CLICK));
-//				_app.playSound(Consts.SOUND_CLICK);
-				e.stopPropagation();
-				_cancelBtn.removeEventListener(MouseEvent.CLICK, cancelFunction);
-				if (hasCancelCall)
-				{
-					if (cancelParam != null)
-						cancelCall(cancelParam);
-					else
-						cancelCall();
-				}
-				removeDialog();
-			}
-			function closeFunction(e:MouseEvent):void
-			{
-				dispatchEvent(new MouseEvent(MouseEvent.CLICK));
-				removeDialog();
+				removeDialog(item);
 			}
 		}
 
-		private function removeDialog():void
+
+		private function addDialog(_dialogMC:Sprite, okCall:Function, cancelCall:Function=null, clickHandler:Function=null, modal:Boolean=true):void
 		{
-			if (_dialogMC != null)
+			var stageWidth:Number = _app.appStage.stage.stageWidth;
+			var stageHeight:Number = _app.appStage.stage.stageHeight;
+			//添加之前把这个框移除先。
+			removeCustomDialog(_dialogMC);
+			var item:DialogItem=new DialogItem();
+			item.dialog=_dialogMC;
+			item.okCall=okCall;
+			item.cancelCall=cancelCall;
+			item.clickHandler=clickHandler;
+			var layer:Sprite=_app.appStage.getChildByName("dialogLayer") as Sprite;
+			layer.mouseChildren=layer.mouseEnabled=true;
+			if (modal)
 			{
-				var layer:Sprite = _app.appStage.getChildByName("dialogLayer") as Sprite;
-				var maskMC:Sprite = layer.getChildByName("maskMC") as Sprite;
-				if (maskMC)
-					layer.removeChild(maskMC);
-				layer.removeChild(_dialogMC);
-				_dialogMC = null;
+				var maskMC:Sprite=GraphicsUtil.createMaskSprite(0, 0, stageWidth * 2, stageHeight * 2); //在手机端stage.stageWidth是不准的。//StageInstance.stage.stageWidth, StageInstance.stage.stageHeight);
+				item.mask=maskMC;
+				maskMC.x=-stageWidth, maskMC.y=-stageHeight;
+				_dialogMC.addChildAt(maskMC, 0);
 			}
+			_dialogs.push(item);
+			_dialogMC.addEventListener(MouseEvent.CLICK, clickDialog);
+			layer.addChild(_dialogMC);
+		}
+
+		private function removeDialog(item:DialogItem):void
+		{
+			if (item)
+			{
+				var index:int=_dialogs.indexOf(item);
+				if(index == -1)return;
+				var layer:Sprite=_app.appStage.getChildByName("dialogLayer") as Sprite;
+				layer.removeChild(item.dialog);
+				if (item.mask)
+					item.dialog.removeChild(item.mask);
+				item.dialog.removeEventListener(MouseEvent.CLICK, clickDialog);
+				_dialogs.splice(index, 1);
+			}
+		}
+
+		private function hasDialog(dialog:Sprite):Boolean
+		{
+			return getDialogItem(dialog) != null;
+		}
+
+		private function getDialogItem(dialog:Sprite):DialogItem
+		{
+			const len:int=_dialogs.length;
+			for (var i:int=0; i < len; i++)
+				if (dialog == _dialogs[i].dialog)
+					return _dialogs[i];
+			return null;
 		}
 
 		/**
 		 * 显示用户自定义的框框.<p/>
-         * 如果dialog发出Event.CLOSE事件，会自动关闭。不触发任何handler。<p/>
+		 * 如果dialog发出Event.CLOSE事件，会自动关闭。不触发任何handler。<p/>
 		 * 当dialog中有名为‘btnOK’,'btnCancel','btnClose'时，点击他们都会关闭这个框框。并触发clickHandler.<bt/>
 		 *        function clickHandler(btnName:String):void
 		 * 		  {
@@ -227,66 +244,60 @@ package com.snsapp.mobile.utils
 		 * 		  	else if(btnName == 'btnClose'){
 		 * 			}
 		 * 		  }
-         * 
-         * 
+		 *
+		 *
 		 * @param dialog.
 		 * @param modal.
 		 * @param clickHandler 点击事件的回调函数.
 		 */
-		public function showCustomDialog(dialog:Sprite, clickHandler:Function = null, modal:Boolean = true):void
+		public function showCustomDialog(dialog:Sprite, clickHandler:Function=null, modal:Boolean=true, okCall:Function=null, cancelCall:Function=null):Sprite
 		{
-			if (_dialogMC == null)
-			{
-				_screenScale = ScreenAdaptiveUtil.SCALE_COMPARED_TO_IP4.maxScale;
-				var layer:Sprite = _app.appStage.getChildByName("dialogLayer") as Sprite;
-				if (modal)
-				{
-					var maskMC:Sprite = GraphicsUtil.createMaskSprite(0, 0, _stageWidth, _stageHeight); //在手机端stage.stageWidth是不准的。//StageInstance.stage.stageWidth, StageInstance.stage.stageHeight);
-					maskMC.name = "maskMC";
-					layer.addChild(maskMC);
-				}
-				dialog.scaleX *= _screenScale;
-				dialog.scaleY *= _screenScale;
-				var bounds:Rectangle = dialog.getBounds(dialog);
-				bounds.x *= _screenScale, bounds.y *= _screenScale;
-				dialog.x = (_stageWidth - dialog.width) / 2 - bounds.x;
-				dialog.y = (_stageHeight - dialog.height) / 2 - bounds.y;
-				layer.addChild(dialog);
-				_dialogMC = dialog;
-                
-                dialog.addEventListener(Event.CLOSE, onClose);
-				dialog.addEventListener(MouseEvent.CLICK, onClickDialog);
-			}
+			var stageWidth:Number = _app.appStage.stage.stageWidth;
+			var stageHeight:Number = _app.appStage.stage.stageHeight;
+			
+			_screenScale=ScreenAdaptiveUtil.SCALE_COMPARED_TO_IP4.maxScale;
+			_screenScale=1;
+			var layer:Sprite=_app.appStage.getChildByName("dialogLayer") as Sprite;
+			dialog.scaleX*=_screenScale;
+			dialog.scaleY*=_screenScale;
+			var bounds:Rectangle=dialog.getBounds(dialog);
+			bounds.x*=_screenScale, bounds.y*=_screenScale;
+			dialog.x=stageWidth >> 1
+			dialog.y=stageHeight >> 1;
+			addDialog(dialog, okCall, cancelCall, clickHandler, modal);
 
-			function onClickDialog(e:MouseEvent):void
-			{
-				var targetName:String = e.target.name;
-				if (targetName == 'btnOK' || targetName == 'btnCancel' || targetName == 'btnClose')
-				{
-                    dialog.removeEventListener(Event.CLOSE, onClose);
-                    dialog.removeEventListener(MouseEvent.CLICK, onClickDialog);
-					removeDialog();
-					if (clickHandler != null)
-						clickHandler(targetName);
-				}
-			}
-            
-            function onClose():void
-            {
-                dialog.removeEventListener(Event.CLOSE, onClose);
-                dialog.removeEventListener(MouseEvent.CLICK, onClickDialog);
-                removeDialog();
-            }
+			return dialog;
 		}
-		
+
 		/**
-		 * 移除自定义对话框 
-		 */	
+		 * 移除自定义对话框
+		 */
 		public function removeCustomDialog(dialog:Sprite):void
 		{
-			removeDialog();
-			
-			//FIXME dialog这里最好能支持多个Dialog并发 
+			var item:DialogItem=getDialogItem(dialog);
+			removeDialog(item);
 		}
+		
+		
+		public function removeAllDialog():void
+		{
+			while(_dialogs.length)
+				removeDialog(_dialogs[0]);
+		}
+	}
+}
+import flash.display.Sprite;
+
+class DialogItem
+{
+	public var dialog:Sprite;
+	public var okCall:Function;
+	public var cancelCall:Function;
+	public var clickHandler:Function;
+	public var mask:Sprite;
+
+	public function DialogItem()
+	{
+
 	}
 }

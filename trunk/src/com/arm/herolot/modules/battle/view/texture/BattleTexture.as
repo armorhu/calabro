@@ -40,8 +40,8 @@ package com.arm.herolot.modules.battle.view.texture
 				insert(GROUND + i, GROUND + i, scale);
 				insert(BLOCK + i, BLOCK + i, scale);
 			}
-			insert(TICK, TICK, scale);
-			insert(CROSS, CROSS, scale);
+			insert(LOCK_FLAG, LOCK_FLAG, scale);
+			insert(UNREACHABLE_FLAG, UNREACHABLE_FLAG, scale);
 			insert(TF_BG, TF_BG, scale);
 			insert(EQUIP_BOX, EQUIP_BOX, scale);
 		}
@@ -49,8 +49,8 @@ package com.arm.herolot.modules.battle.view.texture
 
 		public static const GROUND:String = 'ground_';
 		public static const BLOCK:String = 'block_';
-		public static const CROSS:String = 'cross';
-		public static const TICK:String = 'tick';
+		public static const LOCK_FLAG:String = 'lock_flag';
+		public static const UNREACHABLE_FLAG:String = 'unReach_flag';
 		public static const TF_BG:String = 'tf_bg';
 		public static const EQUIP_BOX:String = 'EquipBox';
 	}

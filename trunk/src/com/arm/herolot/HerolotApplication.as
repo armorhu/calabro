@@ -5,6 +5,7 @@ package com.arm.herolot
 	import com.arm.herolot.model.data.model.GameDataModel;
 	import com.arm.herolot.modules.battle.IBattleApi;
 	import com.arm.herolot.modules.battle.battle.hero.HeroModel;
+	import com.arm.herolot.services.notice.GameNoticeManager;
 	import com.arm.herolot.services.utils.EmbedFont;
 	import com.arm.herolot.works.startup.StartupGameWorkers;
 	import com.qzone.qfa.control.Application;
@@ -16,6 +17,7 @@ package com.arm.herolot
 	import com.qzone.qfa.utils.CommonUtil;
 	import com.snsapp.mobile.StageInstance;
 	import com.snsapp.mobile.utils.Cookies;
+	import com.snsapp.mobile.utils.MessageBoxHelper;
 	import com.snsapp.mobile.utils.MobileScreenUtil;
 	import com.snsapp.starling.texture.TextureLoader;
 	
@@ -39,7 +41,15 @@ package com.arm.herolot
 		 *游戏数据模型 
 		 */		
 		public var gameDataModel:GameDataModel;
-
+		
+		/**
+		 *游戏提醒 
+		 */		
+		public var noticeManager:GameNoticeManager;
+		
+		
+		private var _msgBox:MessageBoxHelper
+		
 		public function HerolotApplication(name:String = "mobile_qfa")
 		{
 			super(name);
@@ -48,10 +58,6 @@ package com.arm.herolot
 
 		override public function startup(root:Sprite):void
 		{
-//			var obj:Object = EnhanceCapacityBuffer.PropertyProxyReg.exec('t.a*&t.a2');
-//			var obj2:Object = EnhanceCapacityBuffer.PropertyProxyReg.exec('tt.0111');
-////			trace(parseFloat('-1'));
-//			return;
 			_appStage = root;
 			buildLayers();
 			initStatic();
@@ -61,6 +67,17 @@ package com.arm.herolot
 
 		private function buildLayers():void
 		{
+			var s:Sprite;
+			
+			s = new Sprite();
+			s.name = 'dialogLayer';
+			_appStage.addChild(s);
+			
+			s = new Sprite();
+			s.name = 'tipLayer';
+			_appStage.addChild(s);
+			
+			
 			_debugLayer = new Sprite;
 			_debugLayer.name = "debugLayer";
 			_appStage.addChild(_debugLayer);
@@ -113,10 +130,20 @@ package com.arm.herolot
 
 			Font.registerFont(KAI);
 			EmbedFont.font = new KAI();
-
+			
+			_msgBox = new MessageBoxHelper(this,EmbedFont.fontName,stageWidth,stageHeight,null,null);
+			noticeManager = new GameNoticeManager(appStage.getChildByName('tipLayer') as Sprite);
+			
 			_rsLoader = new ResourceLoader(Consts.RSL_VERSION);
 			_textureLoader = new TextureLoader(this, Vars.starlingScreenScale);
 			setupRemoteNotificationService();
+		}
+		
+		public function get stageWidth():Number{
+			return Vars.stageWidth;
+		}
+		public function get stageHeight():Number{
+			return Vars.stageHeight;
 		}
 
 		/**
@@ -125,27 +152,14 @@ package com.arm.herolot
 		 */
 		public function startBattle(hero:HeroModel):void
 		{
-//			this.unloadModule(Consts.MODULE_LAUNCH);
-//			this.loadModule(Consts.MODULE_BATTLE);
-//			var battleM:IBattleApi = getModuleAPI(Consts.MODULE_BATTLE) as IBattleApi;
-//			battleM.startBattle(hero);
 		}
 
 		public function gameOver():void
 		{
-//			this.unloadModule(Consts.MODULE_BATTLE);
-//			this.loadModule(Consts.MODULE_LAUNCH);
 		}
 
 		public function loadPlayerData(complete:Function):void
 		{
-//			if (_player == null)
-//			{
-//				var obj:Object = Cookies.getObject(SO_PLAYER);
-//				obj = {level: 100, kill: 200, money: 20000};
-//				_player = new GameData(obj);
-//			}
-//			complete(_player);
 		}
 	}
 }

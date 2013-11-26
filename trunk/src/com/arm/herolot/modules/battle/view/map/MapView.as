@@ -17,11 +17,10 @@ package com.arm.herolot.modules.battle.view.map
 	 */
 	public class MapView extends Sprite
 	{
-
 		private var _grids:Vector.<MapGridView>;
 
 		private var _texture:BatchTexture;
-		
+
 		private var _alignSetting:VerticalAlign;
 
 
@@ -48,19 +47,19 @@ package com.arm.herolot.modules.battle.view.map
 		{
 			var len:int = _grids.length;
 			var point:Point;
-			for (var i:int = 0; i < len; i++) 
+			for (var i:int = 0; i < len; i++)
 			{
-				if(_grids[i])
+				if (_grids[i])
 				{
 					_grids[i].dispose();
 					removeChild(_grids[i]);
 					_grids[i] = null;
 				}
-				
-				_grids[i] = MapGridView.createMapGridView(grids[i],_texture);
+
+				_grids[i] = MapGridView.createMapGridView(grids[i], _texture);
 				addChild(_grids[i]);
 				point = _alignSetting.getPostionOf(i);
-				_grids[i].x = point.x,_grids[i].y = point.y;
+				_grids[i].x = point.x, _grids[i].y = point.y;
 			}
 		}
 	}

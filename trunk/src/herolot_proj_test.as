@@ -1,8 +1,18 @@
 package
 {
 	import com.arm.herolot.services.utils.Csv2asCommand;
-	
+	import com.qzone.qfa.managers.LoadManager;
+	import com.qzone.qfa.managers.events.LoaderEvent;
+
+	import flash.display.Bitmap;
+	import flash.display.BitmapData;
+	import flash.display.Loader;
+	import flash.display.PNGEncoderOptions;
 	import flash.display.Sprite;
+	import flash.display.StageQuality;
+	import flash.filesystem.File;
+	import flash.filesystem.FileMode;
+	import flash.filesystem.FileStream;
 
 	public class herolot_proj_test extends Sprite
 	{
@@ -23,8 +33,43 @@ package
 //			var testRunner:TestRunner = new TestRunner();
 //			this.addChild(testRunner);
 //			testRunner.start(HerolotTestSuite);
-			
-			new Csv2asCommand().start();
+
+//			new Csv2asCommand().start();
+
+			var ld:LoadManager = new LoadManager();
+			ld.maxThreadCount = 8;
+			ld.addEventListeners(loaderEventHandler);
+			var items:File = new File(File.applicationDirectory.resolvePath('res/pic/monsters').nativePath);
+			var itemFiles:Array = items.getDirectoryListing();
+			for (var i:int = 0; i < itemFiles.length; i++)
+			{
+				if ((itemFiles[i] as File).extension.toLocaleLowerCase() == 'png')
+					ld.add(itemFiles[i].url);
+			}
+			ld.start();
 		}
+
+		private function loaderEventHandler(evt:LoaderEvent):void
+		{
+			if (evt.type == LoaderEvent.COMPLETE)
+			{
+				var url:String = evt.item.url.replace('monsters', 'monsters2');
+				var toFile:File = new File(url);
+				var bitmap:Bitmap = evt.item.data as Bitmap;
+				bitmap.scaleX = 4, bitmap.scaleY = 4;
+				var bmd:BitmapData = new BitmapData(bitmap.width, bitmap.height);
+				bmd.drawWithQuality(bitmap, bitmap.transform.matrix, null, null, null, true, StageQuality.BEST);
+				evt.item.destroy();
+				evt.item = null;
+				var fs:FileStream = new FileStream();
+				fs.open(toFile, FileMode.WRITE);
+				fs.writeBytes(bmd.encode(bmd.rect, new PNGEncoderOptions()));
+				fs.close();
+				
+				
+				
+			}
+		}
+
 	}
 }

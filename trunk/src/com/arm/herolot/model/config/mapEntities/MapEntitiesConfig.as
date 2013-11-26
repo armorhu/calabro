@@ -8,7 +8,8 @@ package com.arm.herolot.model.config.mapEntities
 		public var Desc:String;
 		public var EntityType:String;
 		public var EntityClass:String;
-		public var EntityScriptName:String;
+		public var ModelClassName:String;
+		public var RenderClassName:String;
 		public var Dropable:Boolean;
 		public var SWF:String;
 		public var MinAppearFloor:int;
