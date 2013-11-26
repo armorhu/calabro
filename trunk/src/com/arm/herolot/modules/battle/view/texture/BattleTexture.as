@@ -9,10 +9,10 @@ package com.arm.herolot.modules.battle.view.texture
 	public class BattleTexture extends CacheableTexture
 	{
 		private static const TEXTURE_LEVEL:Vector.<Point> = new <Point>[ //
+			new Point(1024, 512), //
+			new Point(512, 512), //
+			new Point(512, 256), //
 			new Point(256, 256), //
-			new Point(256, 128), //
-			new Point(128, 128), //
-			new Point(128, 64), //
 			];
 
 		public function BattleTexture(app:IApplication)

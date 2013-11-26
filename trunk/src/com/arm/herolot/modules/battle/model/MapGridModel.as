@@ -52,7 +52,7 @@ package com.arm.herolot.modules.battle.model
 		private var _modelChange:Boolean;
 
 		public var gid:int;
-		
+
 		public var floor:int;
 
 		public function MapGridModel()
@@ -136,7 +136,7 @@ package com.arm.herolot.modules.battle.model
 		}
 
 
-		public static function createMapEntityModel(gridData:MapGridData):MapGridModel
+		public static function createMapEntityModel(gridData:MapGridData, gid:int, floor:int):MapGridModel
 		{
 			if (gridData.entity.id > 0)
 			{
@@ -157,6 +157,8 @@ package com.arm.herolot.modules.battle.model
 			var model:MapGridModel = new modelClass();
 			model.gridData = gridData;
 			model.entityConfig = AppConfig.mapEntitiesConfigModel.getMapEntitiesConfigByID(gridData.entity.id);
+			model.gid = gid;
+			model.floor = floor;
 			model.initalize();
 			return model;
 		}

@@ -66,9 +66,7 @@ package com.arm.herolot.modules.battle
 					mapGrids[i] = null;
 				}
 
-				mapGrids[i] = MapGridModel.createMapEntityModel(mapData.grids[i]);
-				mapGrids[i].gid = i;
-				mapGrids[i].floor = _currentFloor;
+				mapGrids[i] = MapGridModel.createMapEntityModel(mapData.grids[i], i, _currentFloor);
 				mapGrids[i].addEventListener(MapGridModel.OPEN, gridModelEventHandler);
 
 			}

@@ -36,17 +36,17 @@ package
 
 //			new Csv2asCommand().start();
 
-			var ld:LoadManager = new LoadManager();
-			ld.maxThreadCount = 8;
-			ld.addEventListeners(loaderEventHandler);
-			var items:File = new File(File.applicationDirectory.resolvePath('res/pic/monsters').nativePath);
-			var itemFiles:Array = items.getDirectoryListing();
-			for (var i:int = 0; i < itemFiles.length; i++)
-			{
-				if ((itemFiles[i] as File).extension.toLocaleLowerCase() == 'png')
-					ld.add(itemFiles[i].url);
-			}
-			ld.start();
+//			var ld:LoadManager = new LoadManager();
+//			ld.maxThreadCount = 8;
+//			ld.addEventListeners(loaderEventHandler);
+//			var items:File = new File(File.applicationDirectory.resolvePath('res/pic/monsters').nativePath);
+//			var itemFiles:Array = items.getDirectoryListing();
+//			for (var i:int = 0; i < itemFiles.length; i++)
+//			{
+//				if ((itemFiles[i] as File).extension.toLocaleLowerCase() == 'png')
+//					ld.add(itemFiles[i].url);
+//			}
+//			ld.start();
 		}
 
 		private function loaderEventHandler(evt:LoaderEvent):void

@@ -106,15 +106,11 @@ package com.arm.herolot.modules.battle.view.map
 				var block:Image = StarlingFactory.newImage(blockTexture);
 				_blockLayer.addChild(block);
 			}
-			this.scaleX = 4;
-			this.scaleY = 4;
-
 			//默认将所有的蒙版蒙上
 			var flagInstance:DisplayObject = StarlingFactory.newImage(_texture.getTexture(BattleTexture.UNREACHABLE_FLAG));
 			_stateLayer.addChild(flagInstance);
 			flagInstance.name = BattleTexture.UNREACHABLE_FLAG;
 
-			validate();
 			_debugText = new TextField(128, 128, '', 'Verdana', 24, 0xffffff);
 			var entityId:int = _model.gridData.entity.id;
 			if (entityId > 0)
@@ -122,10 +118,7 @@ package com.arm.herolot.modules.battle.view.map
 			var dropId:int = _model.gridData.entity.dropID;
 			if (dropId > 0)
 				_debugText.text = _debugText.text + '\n' + AppConfig.mapEntitiesConfigModel.getMapEntitiesConfigByID(dropId).DisplayName;
-			_debugText.scaleX = 0.25, _debugText.scaleY = 0.25;
 			addChild(_debugText);
-
-
 			addEventListener(TouchEvent.TOUCH, touchMeBaby);
 		}
 
@@ -207,7 +200,8 @@ package com.arm.herolot.modules.battle.view.map
 
 		protected function onloadEntityTexture(texture:TextureBase):void
 		{
-			if (texture.texture.width == 128)
+			trace(texture.texture.width, texture.texture.height)
+			if (texture.texture.height == 32)
 			{
 				var atlas:TextureAtlas = new TextureAtlas(texture.texture, <TextureAtlas imagePath='atlas.png'>
 						<SubTexture name='texture_1' x='0'  y='0' width='32' height='32'/>
@@ -217,13 +211,13 @@ package com.arm.herolot.modules.battle.view.map
 					</TextureAtlas>);
 
 				var mc:MovieClip = new MovieClip(atlas.getTextures('texture'), 6);
+				mc.scaleX = 4, mc.scaleY = 4;
 				Starling.juggler.add(mc);
 				_entity.addChild(mc);
 			}
 			else
 			{
 				var img:Image = StarlingFactory.newImage(texture as SingleTexture);
-				img.scaleX = img.scaleY = 0.5;
 				_entity.addChild(img);
 			}
 		}
@@ -250,6 +244,7 @@ package com.arm.herolot.modules.battle.view.map
 			view._texture = texture;
 			view.model = model;
 			view.initliaze();
+			view.validate();
 			return view;
 		}
 	}

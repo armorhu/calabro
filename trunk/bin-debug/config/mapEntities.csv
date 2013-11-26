@@ -3,9 +3,9 @@ int,string,string,string,string,string,string,string,Boolean,string,int,int,int,
 1,yaoshi,yaoshi,,misc,misc,,,FALSE,res/pic/items/key.png,1,1
 2,men,men,,misc,misc,DoorModel,RoorRender,FALSE,res/pic/items/door.png
 2,entity1,骷髅守卫,miaoshu,monster,bad,MonsterModel,MonsterRender,FALSE,res/pic/monsters/31001.png,1,100,50,0,10,0
-3,entity2,骷髅守卫,miaoshu,monster,bad,,,FALSE,res/pic/monsters/31002.png,1,101,51
-4,entity3,骷髅守卫,miaoshu,monster,bad,,,FALSE,res/pic/monsters/31003.png,1,102,52
-5,entity4,骷髅守卫,miaoshu,monster,bad,,,FALSE,res/pic/monsters/31004.png,1,103,53
+3,entity2,骷髅守卫,miaoshu,monster,bad,MonsterModel,MonsterRender,FALSE,res/pic/monsters/31002.png,1,101,51
+4,entity3,骷髅守卫,miaoshu,monster,bad,MonsterModel,MonsterRender,FALSE,res/pic/monsters/31003.png,1,102,52
+5,entity4,骷髅守卫,miaoshu,monster,bad,MonsterModel,MonsterRender,FALSE,res/pic/monsters/31004.png,1,103,53
 6,entity5,战士,miaoshu,allies,good,GuardModel,GuardRender,FALSE,res/pic/monsters/31005.png,1
 7,entity6,牧师,miaoshu,allies,good,HealtherModel,HealtherRender,FALSE,res/pic/monsters/31006.png
 8,entity7,法师,miaoshu,allies,good,MageModel,MageRender,FALSE,res/pic/monsters/31007.png
