@@ -65,9 +65,6 @@ package
 				fs.open(toFile, FileMode.WRITE);
 				fs.writeBytes(bmd.encode(bmd.rect, new PNGEncoderOptions()));
 				fs.close();
-				
-				
-				
 			}
 		}
 

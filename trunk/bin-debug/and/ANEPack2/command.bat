@@ -1,0 +1,1 @@
+adt -package -storetype PKCS12 -keystore appplatform.p12 -storepass 123456 -target ane CallAppExtension.ane extension.xml -swc *.swc -platform Android-ARM -C .\Android-ARM\ . -platform default -C .\Default\ . 

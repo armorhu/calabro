@@ -1,0 +1,6 @@
+skills.csv,true
+buffers.csv,true
+heros.csv,false
+mapEntities.csv,false
+
+

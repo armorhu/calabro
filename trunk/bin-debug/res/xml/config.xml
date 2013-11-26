@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+<lang>
+    <text id='10001'>最高得分</text>
+    <text id='10002'>杀敌数量</text>
+</lang>
+<skills type='1' src='res/pic/skill/'><![CDATA[
+    {
+    "22001":{"name":"圣光审判",
+    "level":
+    [
+    {"cost":200,"desc":"+25%对不死族的伤害","pb":["EnhanceCapacityBuffer",{"ba":"t.ethnicity==1,pack.per+=0.25","aa":"t.ethnicity==1,pack.per-=0.25"}]},
+    {"cost":400,"desc":"+50%对不死族的伤害","pb":["EnhanceCapacityBuffer",{"ba":"t.ethnicity==1,pack.per+=0.5","aa":"t.ethnicity==1,pack.per-=0.5"}]},
+    {"cost":800,"desc":"+75%对不死族的伤害","pb":["EnhanceCapacityBuffer",{"ba":"t.ethnicity==1,pack.per+=0.75","aa":"t.ethnicity==1,pack.per-=0.75"}]},
+    {"cost":1600,"desc":"+100%对不死族的伤害","pb":["EnhanceCapacityBuffer",{"ba":"t.ethnicity==1,pack.per+=1","aa":"t.ethnicity==1,pack.per-=1"}]}
+    ]
+    },
+    "22002":{"name":"圣之献祭",
+    "level":
+    [
+    {"cost":200,"desc":"杀死一个不死族敌人后，有25%的几率，提高12.5%的攻击力。","pb":["EnhanceCapacityBuffer",{"aa":"t.ethnicity==1,t.hp<=0,0.25,pack.per+=0.125,1|aa|pack.per-=0.125"}]},
+    {"cost":400,"desc":"杀死一个不死族敌人后，有50%的几率，提高25%的攻击力。","pb":["EnhanceCapacityBuffer",{"aa":"t.ethnicity==1,t.hp<=0,0.5,pack.per+=0.25,1|aa|pack.per-=0.25"}]},
+    {"cost":800,"desc":"杀死一个不死族敌人后，有75%的几率，提高27.5%的攻击力。","pb":["EnhanceCapacityBuffer",{"aa":"t.ethnicity==1,t.hp<=0,0.75,pack.per+=0.375,1|aa|pack.per-=0.375"}]},
+    {"cost":1600,"desc":"杀死一个不死族敌人后，有100%的几率，提高50%的攻击力。","pb":["EnhanceCapacityBuffer",{"aa":"t.ethnicity==1,t.hp<=0,1,pack.per+=0.5,1|aa|pack.per-=0.5"}]}
+    ]
+    },
+    "22003":{"name":"天使守护",
+    "level":
+    [
+    {"cost":200,"desc":"死亡后被复活一次，复活后的生命值为初始值的10%","pb":["RelifeBuffer",0.1]},
+    {"cost":400,"desc":"死亡后被复活一次，复活后的生命值为初始值的20%","pb":["RelifeBuffer",0.2]},
+    {"cost":800,"desc":"死亡后被复活一次，复活后的生命值为初始值的30%","pb":["RelifeBuffer",0.3]},
+    {"cost":1600,"desc":"死亡后被复活一次，复活后的生命值为初始值的40%","pb":["RelifeBuffer",0.4]}
+    ]
+    },
+    "22004":{"name":"属性点",
+    "level":
+    [
+    {"cost":200,"desc":"+25生命\n+1攻击\n+5速度\n+1暴击","pb":["EnhanceCapacityBuffer",{"add":"php.orignal+=25,pack.orignal+=1,pspeed.orignal+=5,pcrit.orignal+=1","remove":"php.orignal-=25,pack.orignal-=1,pspeed.orignal-=5,pcrit.orignal-=1"}]},
+    {"cost":400,"desc":"+50生命\n+2攻击\n+10速度\n+2暴击","pb":["EnhanceCapacityBuffer",{"add":"php.orignal+=25*2,pack.orignal+=1*2,pspeed.orignal+=5*2,pcrit.orignal+=1*2","remove":"php.orignal-=25*2,pack.orignal-=1*2,pspeed.orignal-=5*2,pcrit.orignal-=1*2"}]},
+    {"cost":800,"desc":"+75生命\n+3攻击\n+15速度\n+3暴击","pb":["EnhanceCapacityBuffer",{"add":"php.orignal+=25*3,pack.orignal+=1*3,pspeed.orignal+=5*3,pcrit.orignal+=1*3","remove":"php.orignal-=25*3,pack.orignal-=1*3,pspeed.orignal-=5*3,pcrit.orignal-=1*3"}]},
+    {"cost":1600,"desc":"+100生命\n+4攻击\n+20速度\n+4暴击","pb":["EnhanceCapacityBuffer",{"add":"php.orignal+=25*4,pack.orignal+=1*4,pspeed.orignal+=5*4,pcrit.orignal+=1*4","remove":"php.orignal-=25*4,pack.orignal-=1*4,pspeed.orignal-=5*4,pcrit.orignal-=1*4"}]}
+    ]
+    }
+    }
+]]></skills>
+<heros type='2' src='res/pic/hero/'><![CDATA[
+    {
+    "21001":{"ack":1,"name":"大娃","hp":50,"crit":1,"speed":10,"skills":[22001,22002,22003,22004]}
+    }
+]]></heros>
+<!--
+ "21002":{"ack":1,"name":"二娃","hp":50,"crit":1,"speed":10,"skills":[22001,22002,22003,22004]},
+ "21003":{"ack":1,"name":"三娃","hp":50,"crit":1,"speed":10,"skills":[22001,22002,22003,22004]},
+ "21004":{"ack":1,"name":"四娃","hp":50,"crit":1,"speed":10,"skills":[22001,22002,22003,22004]},
+ "21005":{"ack":1,"name":"五娃","hp":50,"crit":1,"speed":10,"skills":[22001,22002,22003,22004]},
+ "21006":{"ack":1,"name":"六娃","hp":50,"crit":1,"speed":10,"skills":[22001,22002,22003,22004]},
+ "21007":{"ack":1,"name":"七娃","hp":50,"crit":1,"speed":10,"skills":[22001,22002,22003,22004]},
+ "21008":{"ack":1,"name":"爷爷","hp":50,"crit":1,"speed":10,"skills":[22001,22002,22003,22004]}
+ -->
+<monsters type='3' src='res/pic/monsters/'><![CDATA[
+    {
+    "31001":{"name":"骷髅守卫","crit":0,"speed":10,"skills":[22001,22002,22003,22004],"appearAt":"[0,1000]","maxPerFloor":2,"ethnicity":1},
+    "31002":{"name":"骷髅战士","crit":0,"speed":10,"skills":[22001,22002,22003,22004],"appearAt":"[0,1000]","maxPerFloor":2,"ethnicity":1},
+    "31003":{"name":"骷髅精英","crit":0,"speed":10,"skills":[22001,22002,22003,22004],"appearAt":"[0,1000]","maxPerFloor":2,"ethnicity":1},
+    "31004":{"name":"骷髅队长","crit":0,"speed":10,"skills":[22001,22002,22003,22004],"appearAt":"[0,1000]","maxPerFloor":2,"ethnicity":1},
+    "31005":{"name":"小蝙蝠","crit":0,"speed":10,"skills":[22001,22002,22003,22004],"appearAt":"[0,1000]","maxPerFloor":2},
+    "31006":{"name":"大蝙蝠","crit":0,"speed":10,"skills":[22001,22002,22003,22004],"appearAt":"[0,1000]","maxPerFloor":2},
+    "31007":{"name":"吸血蝙蝠","crit":0,"speed":10,"skills":[22001,22002,22003,22004],"appearAt":"[0,1000]","maxPerFloor":2},
+    "31008":{"name":"黑袍法师","crit":0,"speed":10,"skills":[22001,22002,22003,22004],"appearAt":"[0,1000]","maxPerFloor":2}
+    }
+]]></monsters>
+<items type='4' src='res/pic/items/'><![CDATA[
+    {
+    "41001":{"name":"key",			"appearAt":"[0,1000]","maxPerFloor":1},
+    "41002":{"name":"door",			"appearAt":"[0,1000]","maxPerFloor":1},
+    "41003":{"name":"attack",		"appearAt":"[0,1000]","maxPerFloor":2},
+    "41004":{"name":"life",			"appearAt":"[0,1000]","maxPerFloor":2},
+    "41005":{"name":"treasure_box",	"appearAt":"[0,1000]","maxPerFloor":5},
+    "41006":{"name":"shield",		"appearAt":"[0,1000]","maxPerFloor":2},
+    "41007":{"name":"plume",		"appearAt":"[0,1000]","maxPerFloor":2},
+    "41008":{"name":"ring",			"appearAt":"[0,1000]","maxPerFloor":2},
+    "41009":{"name":"armour",		"appearAt":"[0,1000]","maxPerFloor":2},
+    "41010":{"name":"fire",			"appearAt":"[0,1000]","maxPerFloor":2},
+    "41011":{"name":"lightning",	"appearAt":"[0,1000]","maxPerFloor":2},
+    "41012":{"name":"cape",			"appearAt":"[0,1000]","maxPerFloor":2},
+    "41013":{"name":"shop",			"appearAt":"[0,1000]","maxPerFloor":1}
+    }
+]]></items>
+<traps type='5' src='res/pic/traps/'><![CDATA[
+    {
+    "51001":{"name":"tile_1","appearAt":"[0,1000]","maxPerFloor":2},
+    "51002":{"name":"tile_2","appearAt":"[0,1000]","maxPerFloor":2},
+    "51003":{"name":"tile_3","appearAt":"[0,1000]","maxPerFloor":2},
+    "51004":{"name":"tile_4","appearAt":"[0,1000]","maxPerFloor":2},
+    "51005":{"name":"tile_5","appearAt":"[0,1000]","maxPerFloor":2},
+    "51006":{"name":"tile_6","appearAt":"[0,1000]","maxPerFloor":2},
+    "51007":{"name":"tile_7","appearAt":"[0,1000]","maxPerFloor":2},
+    "51008":{"name":"tile_8","appearAt":"[0,1000]","maxPerFloor":2}
+    }
+]]></traps>
+</config>

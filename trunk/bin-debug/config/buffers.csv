@@ -1,0 +1,6 @@
+ID,Name,Type,TriggerStep,TriggerCondition,EffectStep,BufferEffect
+int,String,String,String,Array,String,Array
+1,AddAttackToDeath,Buffer,BeforeAttack,t.ethnicity==1,,attack+=%1%
+2,AddAttackWhenKillDeath,Buffer,AfterAttack,t.ethnicity==1,,attackPer+=%1%
+,,,,t.hp<=0,,
+,,,,%1%,,

@@ -1,0 +1,3 @@
+ID,Name,Desc,HitPoint,DamagePoint,Crit,Speed,Doduge,Armor,SkillIds,BigPicURL,SmallPicURL
+int,string,string,int,int,int,int,int,int,Array,String,String
+1,dawa,xxx,50,1,1,10,0,1,1|2|3|4,res/pic/hero/21001.jpg,res/pic/hero/s21001.jpg
