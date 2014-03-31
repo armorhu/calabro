@@ -10,6 +10,7 @@ package com.arm.herolot.modules.battle
 	import com.arm.herolot.modules.battle.view.battleui.BattleuiView;
 	import com.arm.herolot.modules.battle.view.map.MapGridView;
 	import com.arm.herolot.modules.battle.view.map.MapView;
+	import com.arm.herolot.services.utils.EffectUtils;
 
 	import flash.geom.Point;
 
@@ -71,19 +72,20 @@ package com.arm.herolot.modules.battle
 			var result:BattleRound = data.result as BattleRound;
 			var attackerView:DisplayObject = getViewOf(attacker);
 			var defenserView:DisplayObject = getViewOf(defenser);
+			playDamage(result.ar.damage, result.ar.crit, result.ar.dodge, attackerView);
+			if (result.ar.die)
+				EffectUtils.die(attackerView);
+			else
+				EffectUtils.attack(attackerView);
 
-			if (result.ar.damage > 0)
-			{
-				playDamage(result.ar.damage, result.ar.crit, attackerView);
-			}
-
-			if (result.dr.damage > 0)
-			{
-				playDamage(result.dr.damage, result.dr.crit, defenserView);
-			}
+			playDamage(result.dr.damage, result.dr.crit, result.dr.dodge, defenserView);
+			if (result.dr.die)
+				EffectUtils.die(defenserView);
+			else
+				EffectUtils.injured(defenserView);
 		}
 
-		private function playDamage(damage:int, crit:Boolean, targetView:DisplayObject):void
+		private function playDamage(damage:int, crit:Boolean, dodge:Boolean, targetView:DisplayObject):void
 		{
 			var point:Point = targetView.localToGlobal(new Point(targetView.width / 2, targetView.height / 2));
 			DamagePlayer.play(damage, crit, point, _effectLayer);
